@@ -15,7 +15,9 @@ describe Verbal::BuildAction do
         expect(method_string).to eql(
           <<-METHOD.gsub(/^\s*/, '').chomp
             def self.some_action()
-            self.new().some_action
+              action = new()
+              value = action.some_action
+              Result.new(outcome: action.outcome, value: value)
             end
           METHOD
         )
@@ -31,7 +33,9 @@ describe Verbal::BuildAction do
         expect(method_string).to eql(
           <<-METHOD.gsub(/^\s*/, '').chomp
             def self.some_action(some_argument:)
-            self.new(some_argument: some_argument).some_action
+              action = new(some_argument: some_argument)
+              value = action.some_action
+              Result.new(outcome: action.outcome, value: value)
             end
           METHOD
         )
@@ -47,7 +51,9 @@ describe Verbal::BuildAction do
         expect(method_string).to eql(
           <<-METHOD.gsub(/^\s*/, '').chomp
             def self.some_action(some_argument_1:, some_argument_2:)
-            self.new(some_argument_1: some_argument_1, some_argument_2: some_argument_2).some_action
+              action = new(some_argument_1: some_argument_1, some_argument_2: some_argument_2)
+              value = action.some_action
+              Result.new(outcome: action.outcome, value: value)
             end
           METHOD
         )
@@ -63,7 +69,9 @@ describe Verbal::BuildAction do
         expect(method_string).to eql(
           <<-METHOD.gsub(/^\s*/, '').chomp
             def self.some_action(some_keyword: :some_default)
-            self.new(some_keyword: some_keyword).some_action
+              action = new(some_keyword: some_keyword)
+              value = action.some_action
+              Result.new(outcome: action.outcome, value: value)
             end
           METHOD
         )
@@ -81,7 +89,9 @@ describe Verbal::BuildAction do
         expect(method_string).to eql(
           <<-METHOD.gsub(/^\s*/, '').chomp
             def self.some_action(some_keyword_1: :some_default_1, some_keyword_2: :some_default_2)
-            self.new(some_keyword_1: some_keyword_1, some_keyword_2: some_keyword_2).some_action
+              action = new(some_keyword_1: some_keyword_1, some_keyword_2: some_keyword_2)
+              value = action.some_action
+              Result.new(outcome: action.outcome, value: value)
             end
           METHOD
         )
@@ -98,7 +108,9 @@ describe Verbal::BuildAction do
         expect(method_string).to eql(
           <<-METHOD.gsub(/^\s*/, '').chomp
             def self.some_action(some_argument:, some_keyword: :some_default)
-            self.new(some_argument: some_argument, some_keyword: some_keyword).some_action
+              action = new(some_argument: some_argument, some_keyword: some_keyword)
+              value = action.some_action
+              Result.new(outcome: action.outcome, value: value)
             end
           METHOD
         )
@@ -118,7 +130,9 @@ describe Verbal::BuildAction do
         expect(method_string).to eql(
           <<-METHOD.gsub(/^\s*/, '').chomp
             def self.some_action(some_argument_1:, some_argument_2:, some_keyword_1: :some_default_1, some_keyword_2: :some_default_2)
-            self.new(some_argument_1: some_argument_1, some_argument_2: some_argument_2, some_keyword_1: some_keyword_1, some_keyword_2: some_keyword_2).some_action
+              action = new(some_argument_1: some_argument_1, some_argument_2: some_argument_2, some_keyword_1: some_keyword_1, some_keyword_2: some_keyword_2)
+              value = action.some_action
+              Result.new(outcome: action.outcome, value: value)
             end
           METHOD
         )

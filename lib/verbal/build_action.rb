@@ -10,7 +10,7 @@ module Verbal
 
     def body
       [
-        "action = self.new(#{initialize_keyword_arguments})",
+        "action = new(#{initialize_keyword_arguments})",
         "value = action.#{method_name}",
         "Result.new(outcome: action.outcome, value: value)"
       ].join("\n")

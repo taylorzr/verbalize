@@ -8,7 +8,7 @@ describe Verbal do
   describe '.verbalize' do
     let(:some_class) do
       Class.new do
-        extend Verbal
+        include Verbal
       end
     end
 
@@ -34,7 +34,7 @@ describe Verbal do
           end
         end
 
-        expect(some_class.some_action).to eql 42
+        expect(some_class.some_action).to eql [:success, 42]
       end
 
       context 'with arguments' do
@@ -71,7 +71,7 @@ describe Verbal do
                                :some_required_argument_2)
 
           expect(some_class.some_action(some_required_argument_1: 21,
-                                        some_required_argument_2: 21)).to eql 42
+                                        some_required_argument_2: 21)).to eql [:success, 42]
         end
       end
 
@@ -89,7 +89,7 @@ describe Verbal do
                                some_keyword_1: 21,
                                some_keyword_2: 21)
 
-          expect(some_class.some_action).to eql 42
+          expect(some_class.some_action).to eql [:success, 42]
         end
 
         it 'allows the defaults to be overriden' do
@@ -98,7 +98,7 @@ describe Verbal do
                                some_keyword_2: 21)
 
           expect(some_class.some_action(some_keyword_1: 333, some_keyword_2: 333))
-            .to eql 666
+            .to eql [:success, 666]
         end
       end
     end
