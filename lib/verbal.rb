@@ -20,15 +20,15 @@ module Verbal
   private
 
   module ClassMethods
-    # TODO:
-    # This this default to defining the method call
-    # And maybe not allow other methods?
-    # Or add a method verbalize_as to define a method named something else
-    def verbalize(*arguments, **keyword_arguments)
-      method_name, *arguments = arguments
-      class_eval BuildAction.new(arguments, keyword_arguments, method_name).build
+    def input(*arguments, verbal_method_name: :call, **keyword_arguments)
+      class_eval BuildAction.new(arguments, keyword_arguments, verbal_method_name).build
       class_eval BuildInitialize.new(arguments, keyword_arguments).build
       class_eval BuildAttributes.new(arguments, keyword_arguments).build
+    end
+
+    def verbalize(*arguments, **keyword_arguments)
+      method_name, *arguments = arguments
+      input(*arguments, verbal_method_name: method_name, **keyword_arguments)
     end
   end
 end
