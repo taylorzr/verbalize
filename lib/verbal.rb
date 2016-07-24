@@ -20,6 +20,10 @@ module Verbal
   private
 
   module ClassMethods
+    def call
+      new.call
+    end
+
     def input(*arguments, verbal_method_name: :call, **keyword_arguments)
       class_eval BuildAction.new(arguments, keyword_arguments, verbal_method_name).build
       class_eval BuildInitialize.new(arguments, keyword_arguments).build
