@@ -6,11 +6,11 @@ require 'verbal/result'
 
 module Verbal
   def outcome
-    @outcome = @fail || :success
+    @outcome = @fail || :ok
   end
 
   def fail!
-    @fail = :failure
+    @fail = :error
   end
 
   def self.included(target)

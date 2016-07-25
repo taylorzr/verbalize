@@ -9,7 +9,7 @@ module Verbal
     end
 
     def failed?
-      outcome == :failure
+      outcome == :error
     end
 
     def outcome
