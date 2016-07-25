@@ -12,7 +12,7 @@ module Verbal
       [
         "action = new(#{initialize_keyword_arguments})",
         "value = action.#{method_name}",
-        "Result.new(outcome: action.outcome, value: value)"
+        'Result.new(outcome: action.outcome, value: value)'
       ].join("\n")
     end
 

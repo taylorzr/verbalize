@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ['Zach Taylor']
   spec.email         = ['taylorzr@gmail.com']
 
-  spec.summary       = %q{Verb based class pattern}
+  spec.summary       = 'Verb based class pattern'
   spec.homepage      = 'https://github.com/taylorzr/verbal'
   spec.license       = 'MIT'
 

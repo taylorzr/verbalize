@@ -22,7 +22,7 @@ describe Verbal do
       it 'requires the user to implement behaviour in an instance method of the same name' do
         some_class.verbalize :some_action
 
-        expect{ some_class.some_action }.to raise_error(NoMethodError)
+        expect { some_class.some_action }.to raise_error(NoMethodError)
       end
 
       it 'creates a new instance of itself, and calls the matching instance method' do
@@ -51,7 +51,7 @@ describe Verbal do
                                :some_required_argument_1,
                                :some_required_argument_2)
 
-          expect{ some_class.some_action }.to raise_error(ArgumentError)
+          expect { some_class.some_action }.to raise_error(ArgumentError)
         end
 
         it 'doesn’t raise an error with a value' do

@@ -35,7 +35,7 @@ describe Verbal::BuildAttributes do
   end
 
   context 'with 1 keyword argument' do
-    let(:keyword_arguments) { { some_keyword: :some_default} }
+    let(:keyword_arguments) { { some_keyword: :some_default } }
 
     it do
       attributes_string = attribute_builder.build
@@ -64,7 +64,7 @@ describe Verbal::BuildAttributes do
 
   context 'with 1 argument, and 1 keyword argument' do
     let(:arguments)         { [:some_argument] }
-    let(:keyword_arguments) { { some_keyword: :some_default} }
+    let(:keyword_arguments) { { some_keyword: :some_default } }
 
     it do
       attributes_string = attribute_builder.build
