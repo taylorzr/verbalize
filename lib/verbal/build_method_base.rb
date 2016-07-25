@@ -34,10 +34,14 @@ class BuildMethodBase
   end
 
   def required_keyword_arguments
-    arguments.map { |argument| "#{argument}:" }.join(', ') unless arguments.empty?
+    return if arguments.empty?
+    arguments.map { |argument| "#{argument}:" }.join(', ')
   end
 
   def defaulted_keyword_arguments
-    keyword_arguments.map { |keyword, value| "#{keyword}: #{value.inspect}" }.join(', ') unless keyword_arguments.empty?
+    return if keyword_arguments.empty?
+    keyword_arguments
+      .map { |keyword, value| "#{keyword}: #{value.inspect}" }
+      .join(', ')
   end
 end

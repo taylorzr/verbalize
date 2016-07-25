@@ -49,7 +49,9 @@ describe Verbal::BuildAttributes do
   end
 
   context 'with multiple keyword arguments' do
-    let(:keyword_arguments) { { some_keyword_1: :some_default_1, some_keyword_2: :some_default_2 } }
+    let(:keyword_arguments) do
+      { some_keyword_1: :some_default_1, some_keyword_2: :some_default_2 }
+    end
 
     it do
       attributes_string = attribute_builder.build
@@ -78,8 +80,10 @@ describe Verbal::BuildAttributes do
   end
 
   context 'with multiple arguments, and multiple keyword arguments' do
-    let(:arguments)         { [:some_argument_1, :some_argument_2] }
-    let(:keyword_arguments) { { some_keyword_1: :some_default_1, some_keyword_2: :some_default_2 } }
+    let(:arguments) { [:some_argument_1, :some_argument_2] }
+    let(:keyword_arguments) do
+      { some_keyword_1: :some_default_1, some_keyword_2: :some_default_2 }
+    end
 
     it do
       attributes_string = attribute_builder.build

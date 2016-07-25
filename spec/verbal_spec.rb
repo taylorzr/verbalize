@@ -19,7 +19,8 @@ describe Verbal do
         expect(some_class).to respond_to(:some_action)
       end
 
-      it 'requires the user to implement behaviour in an instance method of the same name' do
+      it 'requires the user to implement behaviour in an instance method \
+      of the same name' do
         some_class.verbalize :some_action
 
         expect { some_class.some_action }.to raise_error(NoMethodError)

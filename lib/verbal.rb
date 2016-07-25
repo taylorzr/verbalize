@@ -17,8 +17,6 @@ module Verbal
     target.extend ClassMethods
   end
 
-  private
-
   module ClassMethods
     def call
       new.call
