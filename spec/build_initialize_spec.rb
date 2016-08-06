@@ -29,7 +29,7 @@ describe Verbal::BuildInitialize do
 
         expect(method_string).to eql(
           <<-METHOD.gsub(/^\s*/, '').chomp
-            def initialize(some_argument: :_verbal_required_argument_value)
+            def initialize(some_argument: nil)
             @some_argument = some_argument
             end
           METHOD
@@ -45,7 +45,7 @@ describe Verbal::BuildInitialize do
 
         expect(method_string).to eql(
           <<-METHOD.gsub(/^\s*/, '').chomp
-            def initialize(some_argument_1: :_verbal_required_argument_value, some_argument_2: :_verbal_required_argument_value)
+            def initialize(some_argument_1: nil, some_argument_2: nil)
             @some_argument_1 = some_argument_1
             @some_argument_2 = some_argument_2
             end

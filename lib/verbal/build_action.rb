@@ -10,12 +10,6 @@ module Verbal
 
     def body
       [
-        # "#{arguments_array}.each do |argument|",
-        # "  if binding.local_variable_get(argument) == #{Verbal::REQUIRED_ARGUMENT_VALUE.inspect}",
-        # "    binding.local_variable_set(argument, nil)",
-        # "  end",
-        # "end",
-        "_verbalize_clean_arguments(method(__method__).parameters, binding)",
         "action = new(#{initialize_keyword_arguments})",
         '_verbalize_validate_arguments(action)',
         "value = action.#{method_name}",

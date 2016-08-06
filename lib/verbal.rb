@@ -6,8 +6,6 @@ require 'verbal/build_argument_validator'
 require 'verbal/result'
 
 module Verbal
-  REQUIRED_ARGUMENT_VALUE = :_verbal_required_argument_value
-
   def outcome
     @outcome = @fail || :ok
   end
@@ -35,16 +33,6 @@ module Verbal
     def verbalize(*arguments, **keyword_arguments)
       method_name, *arguments = arguments
       input(*arguments, verbal_method_name: method_name, **keyword_arguments)
-    end
-
-    private
-
-    def _verbalize_clean_arguments(parameters, action_binding)
-      parameters.each do |_type, variable_name|
-        if action_binding.local_variable_get(variable_name) == Verbal::REQUIRED_ARGUMENT_VALUE
-          action_binding.local_variable_set(variable_name, nil)
-        end
-      end
     end
   end
 end

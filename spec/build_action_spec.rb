@@ -16,6 +16,7 @@ describe Verbal::BuildAction do
           <<-METHOD.gsub(/^\s*/, '').chomp
             def self.some_action()
               action = new()
+              _verbalize_validate_arguments(action)
               value = action.some_action
               Result.new(outcome: action.outcome, value: value)
             end
@@ -34,6 +35,7 @@ describe Verbal::BuildAction do
           <<-METHOD.gsub(/^\s*/, '').chomp
             def self.some_action(some_argument: nil)
               action = new(some_argument: some_argument)
+              _verbalize_validate_arguments(action)
               value = action.some_action
               Result.new(outcome: action.outcome, value: value)
             end
@@ -52,6 +54,7 @@ describe Verbal::BuildAction do
           <<-METHOD.gsub(/^\s*/, '').chomp
             def self.some_action(some_argument_1: nil, some_argument_2: nil)
               action = new(some_argument_1: some_argument_1, some_argument_2: some_argument_2)
+              _verbalize_validate_arguments(action)
               value = action.some_action
               Result.new(outcome: action.outcome, value: value)
             end

@@ -93,7 +93,7 @@ describe Verbal do
           end
         end
 
-        r = verb.call(a: nil, b: nil)
+        verb.call(b: 2)
       end
 
       # FIXME

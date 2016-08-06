@@ -31,6 +31,6 @@ class BuildMethodBase
 
   def declaration_keyword_arguments
     return if arguments.empty?
-    arguments.map { |argument| "#{argument}: #{Verbal::REQUIRED_ARGUMENT_VALUE.inspect}" }.join(', ')
+    arguments.map { |argument| "#{argument}: nil" }.join(', ')
   end
 end
