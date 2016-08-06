@@ -52,7 +52,7 @@ describe Verbal do
                                :some_required_argument_1,
                                :some_required_argument_2)
 
-          expect { some_class.some_action }.to raise_error(ArgumentError)
+          expect { some_class.some_action }.to raise_error
         end
 
         it 'doesn’t raise an error with a value' do
@@ -76,7 +76,30 @@ describe Verbal do
         end
       end
 
-      context 'with keyword arguments' do
+      it 'common usage' do
+        verb = Class.new do
+          include Verbal
+
+          verbalize :call, :a, :b
+
+          def call
+            a + b
+          end
+
+          private
+
+          def a
+            @a ||= 21
+          end
+        end
+
+        r = verb.call(a: nil, b: nil)
+      end
+
+      # FIXME
+      # Remove support for default values
+      # and raise errors when given
+      xcontext 'with keyword arguments' do
         before do
           some_class.class_eval do
             def some_action

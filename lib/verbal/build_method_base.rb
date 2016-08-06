@@ -1,5 +1,5 @@
 class BuildMethodBase
-  def initialize(arguments, keyword_arguments, method_name = nil)
+  def initialize(arguments, keyword_arguments = nil, method_name = nil)
     @arguments         = arguments
     @keyword_arguments = keyword_arguments
     @method_name       = method_name
@@ -26,22 +26,11 @@ class BuildMethodBase
   end
 
   def variables
-    arguments + keyword_arguments.keys
+    arguments
   end
 
   def declaration_keyword_arguments
-    [required_keyword_arguments, defaulted_keyword_arguments].compact.join(', ')
-  end
-
-  def required_keyword_arguments
     return if arguments.empty?
-    arguments.map { |argument| "#{argument}:" }.join(', ')
-  end
-
-  def defaulted_keyword_arguments
-    return if keyword_arguments.empty?
-    keyword_arguments
-      .map { |keyword, value| "#{keyword}: #{value.inspect}" }
-      .join(', ')
+    arguments.map { |argument| "#{argument}: #{Verbal::REQUIRED_ARGUMENT_VALUE.inspect}" }.join(', ')
   end
 end

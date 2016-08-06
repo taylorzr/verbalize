@@ -32,7 +32,7 @@ describe Verbal::BuildAction do
 
         expect(method_string).to eql(
           <<-METHOD.gsub(/^\s*/, '').chomp
-            def self.some_action(some_argument:)
+            def self.some_action(some_argument: nil)
               action = new(some_argument: some_argument)
               value = action.some_action
               Result.new(outcome: action.outcome, value: value)
@@ -50,7 +50,7 @@ describe Verbal::BuildAction do
 
         expect(method_string).to eql(
           <<-METHOD.gsub(/^\s*/, '').chomp
-            def self.some_action(some_argument_1:, some_argument_2:)
+            def self.some_action(some_argument_1: nil, some_argument_2: nil)
               action = new(some_argument_1: some_argument_1, some_argument_2: some_argument_2)
               value = action.some_action
               Result.new(outcome: action.outcome, value: value)
@@ -60,7 +60,10 @@ describe Verbal::BuildAction do
       end
     end
 
-    context 'with a method name and 1 keyword argument' do
+    # FIXME:
+    # Remove support for default values
+    # Raise error if given
+    xcontext 'with a method name and 1 keyword argument' do
       let(:keyword_arguments) { { some_keyword: :some_default } }
 
       it do
@@ -78,7 +81,7 @@ describe Verbal::BuildAction do
       end
     end
 
-    context 'with a method name and multiple keyword arguments' do
+    xcontext 'with a method name and multiple keyword arguments' do
       let(:keyword_arguments) do
         { some_keyword_1: :some_default_1, some_keyword_2: :some_default_2 }
       end
@@ -98,7 +101,7 @@ describe Verbal::BuildAction do
       end
     end
 
-    context 'with a method name, 1 argument, and 1 keyword argument' do
+    xcontext 'with a method name, 1 argument, and 1 keyword argument' do
       let(:arguments)         { [:some_argument] }
       let(:keyword_arguments) { { some_keyword: :some_default } }
 
@@ -117,7 +120,7 @@ describe Verbal::BuildAction do
       end
     end
 
-    context 'with a method name, multiple arguments, and multiple keyword arguments' do
+    xcontext 'with a method name, multiple arguments, and multiple keyword arguments' do
       let(:arguments) { [:some_argument_1, :some_argument_2] }
 
       let(:keyword_arguments) do
