@@ -1,8 +1,7 @@
 class BuildMethodBase
-  def initialize(arguments, keyword_arguments = nil, method_name = nil)
-    @arguments         = arguments
-    @keyword_arguments = keyword_arguments
-    @method_name       = method_name
+  def initialize(arguments, method_name = nil)
+    @arguments   = arguments
+    @method_name = method_name
   end
 
   def build
@@ -11,7 +10,7 @@ class BuildMethodBase
 
   private
 
-  attr_reader :arguments, :keyword_arguments, :method_name
+  attr_reader :arguments, :method_name
 
   def parts
     [declaration, body, 'end']

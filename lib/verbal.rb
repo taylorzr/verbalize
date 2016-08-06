@@ -24,9 +24,10 @@ module Verbal
     end
 
     def input(*arguments, verbal_method_name: :call, **keyword_arguments)
-      class_eval BuildAction.new(arguments, keyword_arguments, verbal_method_name).build
-      class_eval BuildInitialize.new(arguments, keyword_arguments).build
-      class_eval BuildAttributes.new(arguments, keyword_arguments).build
+      raise ArgumentError unless keyword_arguments.empty?
+      class_eval BuildAction.new(arguments, verbal_method_name).build
+      class_eval BuildInitialize.new(arguments).build
+      class_eval BuildAttributes.new(arguments).build
       class_eval BuildArgumentValidator.new(arguments).build
     end
 

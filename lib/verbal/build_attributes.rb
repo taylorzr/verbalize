@@ -1,20 +1,16 @@
 module Verbal
   class BuildAttributes
-    def initialize(arguments, keyword_arguments)
-      @arguments         = arguments
-      @keyword_arguments = keyword_arguments
+    def initialize(arguments)
+      @arguments = arguments
     end
 
     def build
-      "attr_accessor #{attributes.join ', '}"
+      return unless arguments
+      "attr_accessor #{arguments.map(&:inspect).join ', '}"
     end
 
     private
 
-    attr_reader :arguments, :keyword_arguments
-
-    def attributes
-      (arguments + keyword_arguments.keys).map(&:inspect)
-    end
+    attr_reader :arguments
   end
 end

@@ -95,36 +95,6 @@ describe Verbal do
 
         verb.call(b: 2)
       end
-
-      # FIXME
-      # Remove support for default values
-      # and raise errors when given
-      xcontext 'with keyword arguments' do
-        before do
-          some_class.class_eval do
-            def some_action
-              some_keyword_1 + some_keyword_2
-            end
-          end
-        end
-
-        it 'provides the keyword values as defaults' do
-          some_class.verbalize(:some_action,
-                               some_keyword_1: 21,
-                               some_keyword_2: 21)
-
-          expect(some_class.some_action).to eql [:ok, 42]
-        end
-
-        it 'allows the defaults to be overriden' do
-          some_class.verbalize(:some_action,
-                               some_keyword_1: 21,
-                               some_keyword_2: 21)
-
-          expect(some_class.some_action(some_keyword_1: 333, some_keyword_2: 333))
-            .to eql [:ok, 666]
-        end
-      end
     end
   end
 end
