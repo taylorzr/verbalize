@@ -86,8 +86,6 @@ describe Verbal do
             a + b
           end
 
-          private
-
           def a
             @a ||= 21
           end
