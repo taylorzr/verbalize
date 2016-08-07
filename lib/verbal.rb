@@ -20,14 +20,15 @@ module Verbal
 
   module ClassMethods
     def call
-      new.call
+      action = new
+      value = action.call
+      Result.new(outcome: action.outcome, value: value)
     end
 
     def input(*arguments, verbal_method_name: :call, **keyword_arguments)
       # TODO
       # Allow configuration to disable Result object return
-      # Clean up tests
-      # Clean up code
+      # Make fail stop action execution
       raise ArgumentError unless keyword_arguments.empty?
       class_eval BuildAction.new(arguments, verbal_method_name).build
       class_eval BuildInitialize.new(arguments).build
