@@ -137,17 +137,17 @@ end
 Calculating -------------------------------------
           Interactor      4619 i/100ms
           Actionizer      4919 i/100ms
-              Verbal     21841 i/100ms
+           Verbalize     21841 i/100ms
                 Ruby     43212 i/100ms
 -------------------------------------------------
           Interactor    46966.6 (±7.5%) i/s -     235569 in   5.046586s
           Actionizer    48493.5 (±6.0%) i/s -     245950 in   5.091045s
-              Verbal   259273.2 (±4.7%) i/s -    1310460 in   5.065844s
+           Verbalize   259273.2 (±4.7%) i/s -    1310460 in   5.065844s
                 Ruby   618459.0 (±5.4%) i/s -    3111264 in   5.046011s
 
 Comparison:
                 Ruby:   618459.0 i/s
-              Verbal:   259273.2 i/s - 2.39x slower
+           Verbalize:   259273.2 i/s - 2.39x slower
           Actionizer:    48493.5 i/s - 12.75x slower
           Interactor:    46966.6 i/s - 13.17x slower
 ```
