@@ -9,10 +9,10 @@ module Verbal
     end
 
     def body
-      return if variables.empty?
+      return if keywords.empty?
 
-      lines = variables.map do |variable|
-        "@#{variable} = #{variable}"
+      lines = keywords.map do |keyword|
+        "@#{keyword} = #{keyword}"
       end
 
       lines.join("\n")

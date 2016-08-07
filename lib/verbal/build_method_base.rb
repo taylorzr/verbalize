@@ -1,6 +1,6 @@
 class BuildMethodBase
-  def initialize(arguments, method_name = nil)
-    @arguments   = arguments
+  def initialize(keywords, method_name = :call)
+    @keywords    = keywords
     @method_name = method_name
   end
 
@@ -10,7 +10,7 @@ class BuildMethodBase
 
   private
 
-  attr_reader :arguments, :method_name
+  attr_reader :keywords, :method_name
 
   def parts
     [declaration, body, 'end']
@@ -24,12 +24,8 @@ class BuildMethodBase
     raise NotImplementedError
   end
 
-  def variables
-    arguments
-  end
-
   def declaration_keyword_arguments
-    return if arguments.empty?
-    arguments.map { |argument| "#{argument}: nil" }.join(', ')
+    return if keywords.empty?
+    keywords.map { |keyword| "#{keyword}: nil" }.join(', ')
   end
 end

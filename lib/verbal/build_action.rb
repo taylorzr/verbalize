@@ -18,7 +18,7 @@ module Verbal
     end
 
     def initialize_keyword_arguments
-      variables.map { |variable| "#{variable}: #{variable}" }.join(', ')
+      keywords.map { |variable| "#{variable}: #{variable}" }.join(', ')
     end
 
     def arguments_array

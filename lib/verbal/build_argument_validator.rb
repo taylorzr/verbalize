@@ -14,26 +14,26 @@ module Verbal
 
     def check_values
       [
-        "arguments = #{arguments_array}",
-        'arguments_without_values = arguments.select do |argument|',
-        '  instance.send(argument).nil?',
+        "keywords = #{keywords_array}",
+        'keywords_without_values = keywords.select do |keyword|',
+        '  instance.send(keyword).nil?',
         'end'
       ]
     end
 
     def raise_error_if_necessary
       [
-        'if arguments_without_values.any?',
+        'if keywords_without_values.any?',
         "  error_message = 'missing keyword'",
-        "  error_message += 's' if arguments_without_values.count > 1",
-        %q{  error_message += ": #{arguments_without_values.join(', ')}"},
+        "  error_message += 's' if keywords_without_values.count > 1",
+        %q{  error_message += ": #{keywords_without_values.join(', ')}"},
         '  raise ArgumentError.new(error_message)',
         'end'
       ]
     end
 
-    def arguments_array
-      "[#{arguments.map(&:inspect).join(', ')}]"
+    def keywords_array
+      "[#{keywords.map(&:inspect).join(', ')}]"
     end
   end
 end

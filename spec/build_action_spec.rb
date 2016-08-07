@@ -1,66 +1,73 @@
 require 'spec_helper'
 
 describe Verbal::BuildAction do
-  describe 'build' do
-    subject(:action_builder) do
-      described_class.new(arguments, :some_action)
+  describe '#build' do
+    it 'builds a method string with no keywords' do
+      action_builder = described_class.new([])
+
+      result = action_builder.build
+
+      expect(result).to eql(
+        <<-METHOD.gsub(/^\s*/, '').chomp
+            def self.call()
+              action = new()
+              _verbalize_validate_arguments(action)
+              value = action.call
+              Result.new(outcome: action.outcome, value: value)
+            end
+        METHOD
+      )
     end
-    let(:arguments)          { [] }
-    let(:keyword_arguments)  { {} }
 
-    context 'with only a method name' do
-      it do
-        method_string = action_builder.build
+    it 'builds a method string with no keywords and a given method name' do
+      action_builder = described_class.new([], :some_action)
 
-        expect(method_string).to eql(
-          <<-METHOD.gsub(/^\s*/, '').chomp
+      result = action_builder.build
+
+      expect(result).to eql(
+        <<-METHOD.gsub(/^\s*/, '').chomp
             def self.some_action()
               action = new()
               _verbalize_validate_arguments(action)
               value = action.some_action
               Result.new(outcome: action.outcome, value: value)
             end
-          METHOD
-        )
-      end
+        METHOD
+      )
     end
 
-    context 'with a method name and 1 argument' do
-      let(:arguments) { [:some_argument] }
+    it 'builds a method string with one keyword' do
+      action_builder = described_class.new([:some_lonely_keyword])
 
-      it do
-        method_string = action_builder.build
+      result = action_builder.build
 
-        expect(method_string).to eql(
-          <<-METHOD.gsub(/^\s*/, '').chomp
-            def self.some_action(some_argument: nil)
-              action = new(some_argument: some_argument)
+      expect(result).to eql(
+        <<-METHOD.gsub(/^\s*/, '').chomp
+            def self.call(some_lonely_keyword: nil)
+              action = new(some_lonely_keyword: some_lonely_keyword)
               _verbalize_validate_arguments(action)
-              value = action.some_action
+              value = action.call
               Result.new(outcome: action.outcome, value: value)
             end
-          METHOD
-        )
-      end
+        METHOD
+      )
     end
 
-    context 'with a method name and multiple arguments' do
-      let(:arguments) { [:some_argument_1, :some_argument_2] }
+    it 'builds a method string with multiple keywords' do
+      action_builder = described_class.new([:some_keyword_1, :some_keyword_2])
 
-      it do
-        method_string = action_builder.build
+      result = action_builder.build
 
-        expect(method_string).to eql(
-          <<-METHOD.gsub(/^\s*/, '').chomp
-            def self.some_action(some_argument_1: nil, some_argument_2: nil)
-              action = new(some_argument_1: some_argument_1, some_argument_2: some_argument_2)
+      expect(result).to eql(
+        <<-METHOD.gsub(/^\s*/, '').chomp
+            def self.call(some_keyword_1: nil, some_keyword_2: nil)
+              action = new(some_keyword_1: some_keyword_1, some_keyword_2: some_keyword_2)
               _verbalize_validate_arguments(action)
-              value = action.some_action
+              value = action.call
               Result.new(outcome: action.outcome, value: value)
             end
-          METHOD
-        )
-      end
+        METHOD
+      )
     end
   end
 end
