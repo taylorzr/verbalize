@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Verbal::BuildAttributes do
+describe Verbalize::BuildAttributes do
   describe '#build' do
     it 'doesn’t create any attributes when there are no keywords' do
       attributes_builder = described_class.new([])

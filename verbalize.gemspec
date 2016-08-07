@@ -1,16 +1,16 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'verbal/version'
+require 'verbalize/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'verbal'
-  spec.version       = Verbal::VERSION
+  spec.name          = 'verbalize'
+  spec.version       = Verbalize::VERSION
   spec.authors       = ['Zach Taylor']
   spec.email         = ['taylorzr@gmail.com']
 
   spec.summary       = 'Verb based class pattern'
-  spec.homepage      = 'https://github.com/taylorzr/verbal'
+  spec.homepage      = 'https://github.com/taylorzr/verbalize'
   spec.license       = 'MIT'
 
   spec.files         = `git ls-files -z`.split("\x0").reject do |f|

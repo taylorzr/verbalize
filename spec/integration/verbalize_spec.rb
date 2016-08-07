@@ -1,12 +1,12 @@
 require 'spec_helper'
 
-describe Verbal do
+describe Verbalize do
   describe '.verbalize' do
     context 'with arguments' do
       it 'it allows arguments to be defined and \
       delegates the class method to the instance method' do
         some_class = Class.new do
-          include Verbal
+          include Verbalize
 
           input :a, :b
 
@@ -22,7 +22,7 @@ describe Verbal do
 
       it 'raises an error when you don’t specify any argument' do
         some_class = Class.new do
-          include Verbal
+          include Verbalize
 
           input :a, :b
 
@@ -35,7 +35,7 @@ describe Verbal do
 
       it 'allows you to specify a default value for an argument' do
         some_class = Class.new do
-          include Verbal
+          include Verbalize
 
           input :a, :b
 
@@ -57,7 +57,7 @@ describe Verbal do
     context 'without_arguments' do
       it 'still does something' do
         some_class = Class.new do
-          include Verbal
+          include Verbalize
 
           def call
             :some_behavior

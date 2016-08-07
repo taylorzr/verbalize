@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Verbal::BuildArgumentValidator do
+describe Verbalize::BuildArgumentValidator do
   describe '#build' do
     it 'builds a method with no keywords' do
       builder = described_class.new([])

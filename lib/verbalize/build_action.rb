@@ -1,6 +1,6 @@
 require_relative 'build_method_base'
 
-module Verbal
+module Verbalize
   class BuildAction < BuildMethodBase
     private
 

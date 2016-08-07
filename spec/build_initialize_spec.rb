@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Verbal::BuildInitialize do
+describe Verbalize::BuildInitialize do
   describe '#build' do
     it 'builds a method string with no keywords' do
       initialize_builder = described_class.new([])

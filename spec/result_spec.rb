@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Verbal::Result do
+describe Verbalize::Result do
   describe '#succeeded?' do
     it 'is true when the outcome is not :error' do
       result = described_class.new(outcome: :not_error, value: nil)

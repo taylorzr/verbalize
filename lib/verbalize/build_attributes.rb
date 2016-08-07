@@ -1,4 +1,4 @@
-module Verbal
+module Verbalize
   class BuildAttributes
     def initialize(keywords)
       @keywords = keywords

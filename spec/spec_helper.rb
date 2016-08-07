@@ -2,7 +2,7 @@ require 'coveralls'
 Coveralls.wear!
 
 $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
-require 'verbal'
+require 'verbalize'
 
 RSpec.configure do |config|
   config.mock_with :rspec do |mocks|

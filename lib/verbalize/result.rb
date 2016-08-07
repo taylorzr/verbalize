@@ -1,4 +1,4 @@
-module Verbal
+module Verbalize
   class Result < Array
     def initialize(outcome:, value:)
       super([outcome, value])
