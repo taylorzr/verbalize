@@ -20,9 +20,5 @@ module Verbalize
     def initialize_keyword_arguments
       keywords.map { |variable| "#{variable}: #{variable}" }.join(', ')
     end
-
-    def arguments_array
-      "[#{arguments.map(&:inspect).join(', ')}]"
-    end
   end
 end
