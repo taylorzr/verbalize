@@ -9,12 +9,13 @@ module Verbal
     end
 
     def body
+      return if keywords.empty?
       (check_values + raise_error_if_necessary).join("\n")
     end
 
     def check_values
       [
-        "keywords = #{keywords_array}",
+        "keywords = [#{keywords.map(&:inspect).join(', ')}]",
         'keywords_without_values = keywords.select do |keyword|',
         '  instance.send(keyword).nil?',
         'end'
@@ -30,10 +31,6 @@ module Verbal
         '  raise ArgumentError.new(error_message)',
         'end'
       ]
-    end
-
-    def keywords_array
-      "[#{keywords.map(&:inspect).join(', ')}]"
     end
   end
 end
