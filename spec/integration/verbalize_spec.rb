@@ -52,6 +52,24 @@ describe Verbalize do
 
         expect(value).to eql(42)
       end
+
+      it 'allows you to fail an action and not execute remaining lines' do
+        some_class = Class.new do
+          include Verbalize
+
+          input :a, :b
+
+          def call
+            fail! 'Are you crazy?!? You can’t divide by zero!'
+            a / b
+          end
+        end
+
+        outcome, value = some_class.call(a: 1, b: 0)
+
+        expect(outcome).to eql(:error)
+        expect(value).to eql('Are you crazy?!? You can’t divide by zero!')
+      end
     end
 
     context 'without_arguments' do
@@ -67,6 +85,22 @@ describe Verbalize do
         _outcome, value = some_class.call
 
         expect(value).to eql(:some_behavior)
+      end
+
+      it 'allows you to fail an action and not execute remaining lines' do
+        some_class = Class.new do
+          include Verbalize
+
+          def call
+            fail! 'Are you crazy?!? You can’t divide by zero!'
+            1 / 0
+          end
+        end
+
+        outcome, value = some_class.call
+
+        expect(outcome).to eql(:error)
+        expect(value).to eql('Are you crazy?!? You can’t divide by zero!')
       end
     end
   end

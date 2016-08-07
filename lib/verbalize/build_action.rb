@@ -12,7 +12,7 @@ module Verbalize
       [
         "action = new(#{initialize_keyword_arguments})",
         '_verbalize_validate_arguments(action)',
-        "value = action.#{method_name}",
+        "value = catch(:verbalize_error) { action.#{method_name} }",
         'Result.new(outcome: action.outcome, value: value)'
       ].join("\n")
     end

@@ -10,8 +10,9 @@ module Verbalize
     @outcome = @fail || :ok
   end
 
-  def fail!
+  def fail!(failure_value)
     @fail = :error
+    throw :verbalize_error, failure_value
   end
 
   def self.included(target)
@@ -21,14 +22,11 @@ module Verbalize
   module ClassMethods
     def call
       action = new
-      value = action.call
+      value = catch(:verbalize_error) { action.call }
       Result.new(outcome: action.outcome, value: value)
     end
 
     def input(*arguments, verbalize_method_name: :call, **keyword_arguments)
-      # TODO
-      # Allow configuration to disable Result object return
-      # Make fail stop action execution
       raise ArgumentError unless keyword_arguments.empty?
       class_eval BuildAction.new(arguments, verbalize_method_name).build
       class_eval BuildInitialize.new(arguments).build
