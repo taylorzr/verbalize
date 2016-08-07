@@ -1,39 +1,21 @@
 require 'spec_helper'
 
 describe Verbal::BuildAttributes do
-  subject(:attribute_builder) { described_class.new(arguments) }
+  describe '#build' do
+    it 'doesn’t create any attributes when there are no keywords' do
+      attributes_builder = described_class.new([])
 
-  let(:arguments) { [] }
+      result = attributes_builder.build
 
-  context 'with no arguments' do
-    it
-  end
-
-  context 'with 1 argument' do
-    let(:arguments) { [:some_argument] }
-
-    it do
-      attributes_string = attribute_builder.build
-
-      expect(attributes_string). to eql(
-        <<-ATTRIBUTES.gsub(/^\s*/, '').chomp
-          attr_accessor :some_argument
-        ATTRIBUTES
-      )
+      expect(result).to eql('')
     end
-  end
 
-  context 'with multiple arguments' do
-    let(:arguments) { [:some_argument_1, :some_argument_2] }
+    it 'creates attributes for each keyword' do
+      attributes_builder = described_class.new([:some_keyword_1, :some_keyword_2])
 
-    it do
-      attributes_string = attribute_builder.build
+      result = attributes_builder.build
 
-      expect(attributes_string). to eql(
-        <<-ATTRIBUTES.gsub(/^\s*/, '').chomp
-          attr_accessor :some_argument_1, :some_argument_2
-        ATTRIBUTES
-      )
+      expect(result).to eql('attr_reader :some_keyword_1, :some_keyword_2')
     end
   end
 end
