@@ -1,7 +1,8 @@
 class BuildMethodBase
-  def initialize(keywords, method_name = :call)
-    @keywords    = keywords
-    @method_name = method_name
+  def initialize(required_keywords: [], optional_keywords: [], method_name: :call)
+    @required_keywords = required_keywords
+    @optional_keywords = optional_keywords
+    @method_name       = method_name
   end
 
   def build
@@ -10,7 +11,7 @@ class BuildMethodBase
 
   private
 
-  attr_reader :keywords, :method_name
+  attr_reader :required_keywords, :optional_keywords, :method_name
 
   def parts
     [declaration, body, 'end']
@@ -24,8 +25,14 @@ class BuildMethodBase
     raise NotImplementedError
   end
 
+  def all_keywords
+    required_keywords + optional_keywords
+  end
+
   def declaration_keyword_arguments
-    return if keywords.empty?
-    keywords.map { |keyword| "#{keyword}: nil" }.join(', ')
+    return if all_keywords.empty?
+    required_keywords_segments = required_keywords.map { |keyword| "#{keyword}:" }
+    optional_keyword_segments  = optional_keywords.map { |keyword| "#{keyword}: nil" }
+    (required_keywords_segments + optional_keyword_segments).join(', ')
   end
 end

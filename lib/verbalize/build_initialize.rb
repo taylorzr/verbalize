@@ -9,9 +9,9 @@ module Verbalize
     end
 
     def body
-      return if keywords.empty?
+      return if all_keywords.empty?
 
-      lines = keywords.map do |keyword|
+      lines = all_keywords.map do |keyword|
         "@#{keyword} = #{keyword}"
       end
 

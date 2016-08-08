@@ -1,16 +1,16 @@
 module Verbalize
   class BuildAttributes
-    def initialize(keywords)
-      @keywords = keywords
+    def initialize(attributes: [])
+      @attributes = attributes
     end
 
     def build
-      return '' if keywords.empty?
-      "attr_reader #{keywords.map(&:inspect).join ', '}"
+      return '' if attributes.empty?
+      "attr_reader #{attributes.map(&:inspect).join ', '}"
     end
 
     private
 
-    attr_reader :keywords
+    attr_reader :attributes
   end
 end

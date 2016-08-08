@@ -20,7 +20,7 @@ describe Verbalize do
         expect(value).to eql(42)
       end
 
-      it 'raises an error when you don’t specify any argument' do
+      it 'raises an error when you don’t specify any required argument' do
         some_class = Class.new do
           include Verbalize
 
@@ -33,11 +33,11 @@ describe Verbalize do
         expect { some_class.call(a: 42) }.to raise_error(ArgumentError)
       end
 
-      it 'allows you to specify a default value for an argument' do
+      it 'allows you to specify an optional argument' do
         some_class = Class.new do
           include Verbalize
 
-          input :a, :b
+          input :a, optional: :b
 
           def call
             a + b
