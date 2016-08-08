@@ -48,7 +48,7 @@ class Add
 end
 
 Add.call # => [:ok, 42]
-Add.call(a: 42, b: 0) # => [:ok, 42]
+Add.call(a: 660, b: 6) # => [:ok, 666]
 ```
 
 ```ruby
