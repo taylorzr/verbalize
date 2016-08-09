@@ -3,8 +3,8 @@ require 'spec_helper'
 describe Verbalize do
   describe '.verbalize' do
     context 'with arguments' do
-      it 'it allows arguments to be defined and \
-      delegates the class method to the instance method' do
+      it 'allows arguments to be defined and delegates the class method \
+      to the instance method' do
         some_class = Class.new do
           include Verbalize
 
@@ -18,6 +18,22 @@ describe Verbalize do
         _outcome, value = some_class.call(a: 40, b: 2)
 
         expect(value).to eql(42)
+      end
+
+      it 'allows class & instance method to be named differently' do
+        some_class = Class.new do
+          include Verbalize
+
+          verbalize :some_method_name
+
+          def some_method_name
+            :some_method_result
+          end
+        end
+
+        _outcome, value = some_class.some_method_name
+
+        expect(value).to eql(:some_method_result)
       end
 
       it 'raises an error when you don’t specify any required argument' do
@@ -101,6 +117,16 @@ describe Verbalize do
 
         expect(outcome).to eql(:error)
         expect(value).to eql('Are you crazy?!? You can’t divide by zero!')
+      end
+
+      it 'raises an error if you specify unrecognize keyword/value arguments' do
+        expect do
+          Class.new do
+            include Verbalize
+
+            input improper: :usage
+          end
+        end.to raise_error(ArgumentError)
       end
     end
   end
