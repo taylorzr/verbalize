@@ -30,7 +30,7 @@ value # => 42
 class Add
   include Verbalize
 
-  input :a, :b
+  input optional: [:a, :b]
 
   def call
     a + b
@@ -69,6 +69,11 @@ result.failed? # => true
 
 ## Comparison/Benchmark
 ```ruby
+require 'verbalize'
+require 'actionizer'
+require 'interactor'
+require 'benchmark/ips'
+
 class RubyAdd
   def self.call(a:, b:)
     new(a: a, b: b).call
@@ -87,9 +92,7 @@ class RubyAdd
 
   attr_reader :a, :b
 end
-```
 
-```ruby
 class VerbalizeAdd
   include Verbalize
 
@@ -99,9 +102,7 @@ class VerbalizeAdd
     a + b
   end
 end
-```
 
-```ruby
 class ActionizerAdd
   include Actionizer
 
@@ -109,9 +110,7 @@ class ActionizerAdd
     output.sum = input.a + input.b
   end
 end
-```
 
-```ruby
 class InteractorAdd
   include Interactor
 
@@ -119,14 +118,10 @@ class InteractorAdd
     context.sum = context.a + context.b
   end
 end
-```
-
-```ruby
-require 'benchmark/ips'
 
 Benchmark.ips do |x|
   x.report('Ruby')       { RubyAdd.call(a: 1, b: 2) }
-  x.report('Verbal')     { VerbalAdd.call(a: 1, b: 2) }
+  x.report('Verbalize')  { VerbalizeAdd.call(a: 1, b: 2) }
   x.report('Actionizer') { ActionizerAdd.call(a: 1, b: 2) }
   x.report('Interactor') { InteractorAdd.call(a: 1, b: 2) }
   x.compare!
@@ -134,22 +129,23 @@ end
 ```
 
 ```
+Warming up --------------------------------------
+                Ruby    53.203k i/100ms
+           Verbalize    27.518k i/100ms
+          Actionizer     4.933k i/100ms
+          Interactor     4.166k i/100ms
 Calculating -------------------------------------
-          Interactor      4619 i/100ms
-          Actionizer      4919 i/100ms
-           Verbalize     21841 i/100ms
-                Ruby     43212 i/100ms
--------------------------------------------------
-          Interactor    46966.6 (±7.5%) i/s -     235569 in   5.046586s
-          Actionizer    48493.5 (±6.0%) i/s -     245950 in   5.091045s
-           Verbalize   259273.2 (±4.7%) i/s -    1310460 in   5.065844s
-                Ruby   618459.0 (±5.4%) i/s -    3111264 in   5.046011s
+                Ruby    544.025k (±13.7%) i/s -      2.660M in   5.011207s
+           Verbalize    278.738k (± 8.0%) i/s -      1.403M in   5.074676s
+          Actionizer     49.571k (± 7.0%) i/s -    246.650k in   5.006194s
+          Interactor     45.896k (± 7.1%) i/s -    229.130k in   5.018389s
 
 Comparison:
-                Ruby:   618459.0 i/s
-           Verbalize:   259273.2 i/s - 2.39x slower
-          Actionizer:    48493.5 i/s - 12.75x slower
-          Interactor:    46966.6 i/s - 13.17x slower
+                Ruby:   544025.0 i/s
+           Verbalize:   278737.9 i/s - 1.95x  slower
+          Actionizer:    49571.1 i/s - 10.97x  slower
+          Interactor:    45896.1 i/s - 11.85x  slower
+
 ```
 
 ## Installation
