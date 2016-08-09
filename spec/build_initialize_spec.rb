@@ -3,9 +3,7 @@ require 'spec_helper'
 describe Verbalize::BuildInitialize do
   describe '#build' do
     it 'builds a method string with no keywords' do
-      initialize_builder = described_class.new
-
-      result = initialize_builder.build
+      result = described_class.call
 
       expect(result).to eql(
         <<-METHOD.gsub(/^\s*/, '').chomp
@@ -16,9 +14,7 @@ describe Verbalize::BuildInitialize do
     end
 
     it 'builds a method string with one keyword' do
-      initialize_builder = described_class.new(required_keywords: [:some_keyword])
-
-      result = initialize_builder.build
+      result = described_class.call(required_keywords: [:some_keyword])
 
       expect(result).to eql(
         <<-METHOD.gsub(/^\s*/, '').chomp
@@ -30,9 +26,9 @@ describe Verbalize::BuildInitialize do
     end
 
     it 'builds a method string with multiple keywords' do
-      initialize_builder = described_class.new(required_keywords: [:some_argument_1, :some_argument_2])
-
-      result = initialize_builder.build
+      result = described_class.call(
+        required_keywords: [:some_argument_1, :some_argument_2]
+      )
 
       expect(result).to eql(
         <<-METHOD.gsub(/^\s*/, '').chomp

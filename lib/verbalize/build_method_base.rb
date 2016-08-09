@@ -1,11 +1,19 @@
 class BuildMethodBase
+  def self.call(required_keywords: [], optional_keywords: [], method_name: :call)
+    new(
+      required_keywords: required_keywords,
+      optional_keywords: optional_keywords,
+      method_name:       method_name
+    ).call
+  end
+
   def initialize(required_keywords: [], optional_keywords: [], method_name: :call)
     @required_keywords = required_keywords
     @optional_keywords = optional_keywords
     @method_name       = method_name
   end
 
-  def build
+  def call
     parts.compact.join "\n"
   end
 
@@ -29,10 +37,16 @@ class BuildMethodBase
     required_keywords + optional_keywords
   end
 
+  def required_keyword_segments
+    required_keywords.map { |keyword| "#{keyword}:" }
+  end
+
+  def optional_keyword_segments
+    optional_keywords.map { |keyword| "#{keyword}: nil" }
+  end
+
   def declaration_keyword_arguments
     return if all_keywords.empty?
-    required_keywords_segments = required_keywords.map { |keyword| "#{keyword}:" }
-    optional_keyword_segments  = optional_keywords.map { |keyword| "#{keyword}: nil" }
-    (required_keywords_segments + optional_keyword_segments).join(', ')
+    (required_keyword_segments + optional_keyword_segments).join(', ')
   end
 end

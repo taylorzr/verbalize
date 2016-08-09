@@ -3,9 +3,7 @@ require 'spec_helper'
 describe Verbalize::BuildAction do
   describe '#build' do
     it 'builds a method string with no keywords' do
-      action_builder = described_class.new
-
-      result = action_builder.build
+      result = described_class.call
 
       expect(result).to eql(
         <<-METHOD.gsub(/^\s*/, '').chomp
@@ -19,9 +17,7 @@ describe Verbalize::BuildAction do
     end
 
     it 'builds a method string with no keywords and a given method name' do
-      action_builder = described_class.new(method_name: :some_action)
-
-      result = action_builder.build
+      result = described_class.call(method_name: :some_action)
 
       expect(result).to eql(
         <<-METHOD.gsub(/^\s*/, '').chomp
@@ -35,9 +31,7 @@ describe Verbalize::BuildAction do
     end
 
     it 'builds a method string with one required keyword' do
-      action_builder = described_class.new(required_keywords: [:some_lonely_required_keyword])
-
-      result = action_builder.build
+      result = described_class.call(required_keywords: [:some_lonely_required_keyword])
 
       expect(result).to eql(
         <<-METHOD.gsub(/^\s*/, '').chomp
@@ -51,9 +45,7 @@ describe Verbalize::BuildAction do
     end
 
     it 'builds a method string with one optional keyword' do
-      action_builder = described_class.new(optional_keywords: [:some_lonely_optional_keyword])
-
-      result = action_builder.build
+      result = described_class.call(optional_keywords: [:some_lonely_optional_keyword])
 
       expect(result).to eql(
         <<-METHOD.gsub(/^\s*/, '').chomp
@@ -67,11 +59,9 @@ describe Verbalize::BuildAction do
     end
 
     it 'builds a method string with multiple required keywords' do
-      action_builder = described_class.new(
+      result = described_class.call(
         required_keywords: [:some_required_keyword_1, :some_required_keyword_2]
       )
-
-      result = action_builder.build
 
       expect(result).to eql(
         <<-METHOD.gsub(/^\s*/, '').chomp
@@ -85,11 +75,9 @@ describe Verbalize::BuildAction do
     end
 
     it 'builds a method string with multiple optional keywords' do
-      action_builder = described_class.new(
+      result = described_class.call(
         optional_keywords: [:some_optional_keyword_1, :some_optional_keyword_2]
       )
-
-      result = action_builder.build
 
       expect(result).to eql(
         <<-METHOD.gsub(/^\s*/, '').chomp
@@ -103,12 +91,10 @@ describe Verbalize::BuildAction do
     end
 
     it 'builds a method string with multiple required and multiple optional keywords' do
-      action_builder = described_class.new(
+      result = described_class.call(
         required_keywords: [:some_required_keyword_1, :some_required_keyword_2],
         optional_keywords: [:some_optional_keyword_1, :some_optional_keyword_2]
       )
-
-      result = action_builder.build
 
       expect(result).to eql(
         <<-METHOD.gsub(/^\s*/, '').chomp
