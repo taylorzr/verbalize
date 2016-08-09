@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Verbalize::BuildAttributes do
+describe Verbalize::BuildAttributeReaders do
   describe '#build' do
     it 'doesn’t create any attributes when there are no attributes' do
       result = described_class.call

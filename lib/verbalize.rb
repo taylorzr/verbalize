@@ -1,7 +1,7 @@
 require 'verbalize/version'
-require 'verbalize/build_initialize'
-require 'verbalize/build_action'
-require 'verbalize/build_attributes'
+require 'verbalize/build_initialize_method'
+require 'verbalize/build_action_method'
+require 'verbalize/build_attribute_readers'
 require 'verbalize/result'
 
 module Verbalize
@@ -32,24 +32,28 @@ module Verbalize
     )
 
       unless other_keyword_arguments.empty?
-        raise ArgumentError,
-              "Unsupported keyword arguments received: #{other_keyword_arguments.inspect}"
+        raise(
+          ArgumentError,
+          "Unsupported keyword arguments received: #{other_keyword_arguments.inspect}"
+        )
       end
 
       optional_keywords = Array(optional)
 
-      class_eval BuildAction.call(
+      class_eval BuildActionMethod.call(
         required_keywords: required_keywords,
         optional_keywords: optional_keywords,
         method_name:       method_name
       )
 
-      class_eval BuildInitialize.call(
+      class_eval BuildInitializeMethod.call(
         required_keywords: required_keywords,
         optional_keywords: optional_keywords
       )
 
-      class_eval BuildAttributes.call(attributes: required_keywords + optional_keywords)
+      class_eval BuildAttributeReaders.call(
+        attributes: required_keywords + optional_keywords
+      )
     end
 
     def call

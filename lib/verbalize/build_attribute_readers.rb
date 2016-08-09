@@ -1,5 +1,5 @@
 module Verbalize
-  class BuildAttributes
+  class BuildAttributeReaders
     def self.call(attributes: [])
       new(attributes: attributes).call
     end
