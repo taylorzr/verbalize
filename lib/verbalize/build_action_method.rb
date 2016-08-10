@@ -12,7 +12,8 @@ module Verbalize
       [
         "action = new(#{initialize_keyword_arguments})",
         "value = catch(:verbalize_error) { action.#{method_name} }",
-        'Result.new(outcome: action.outcome, value: value)'
+        'outcome = action.instance_variable_get(:@verbalize_outcome) || :ok',
+        'Result.new(outcome: outcome, value: value)'
       ].join("\n")
     end
 

@@ -5,12 +5,8 @@ require 'verbalize/build_attribute_readers'
 require 'verbalize/result'
 
 module Verbalize
-  def outcome
-    @outcome = @fail || :ok
-  end
-
   def fail!(failure_value)
-    @fail = :error
+    @verbalize_outcome = :error
     throw :verbalize_error, failure_value
   end
 
@@ -57,9 +53,10 @@ module Verbalize
     end
 
     def call
-      action = new
-      value = catch(:verbalize_error) { action.call }
-      Result.new(outcome: action.outcome, value: value)
+      action  = new
+      value   = catch(:verbalize_error) { action.call }
+      outcome = action.instance_variable_get(:@verbalize_outcome) || :ok
+      Result.new(outcome: outcome, value: value)
     end
   end
 end
