@@ -54,7 +54,7 @@ module Verbalize
 
     def call
       action  = new
-      value   = catch(:verbalize_error) { action.call }
+      value   = catch(:verbalize_error) { action.send(:call) }
       outcome = action.instance_variable_get(:@verbalize_outcome) || :ok
       Result.new(outcome: outcome, value: value)
     end

@@ -9,7 +9,7 @@ describe Verbalize::BuildActionMethod do
         <<-METHOD.gsub(/^\s*/, '').chomp
             def self.call()
               action = new()
-              value = catch(:verbalize_error) { action.call }
+              value = catch(:verbalize_error) { action.send(:call) }
               outcome = action.instance_variable_get(:@verbalize_outcome) || :ok
               Result.new(outcome: outcome, value: value)
             end
@@ -24,7 +24,7 @@ describe Verbalize::BuildActionMethod do
         <<-METHOD.gsub(/^\s*/, '').chomp
             def self.some_action()
               action = new()
-              value = catch(:verbalize_error) { action.some_action }
+              value = catch(:verbalize_error) { action.send(:some_action) }
               outcome = action.instance_variable_get(:@verbalize_outcome) || :ok
               Result.new(outcome: outcome, value: value)
             end
@@ -39,7 +39,7 @@ describe Verbalize::BuildActionMethod do
         <<-METHOD.gsub(/^\s*/, '').chomp
             def self.call(some_lonely_required_keyword:)
               action = new(some_lonely_required_keyword: some_lonely_required_keyword)
-              value = catch(:verbalize_error) { action.call }
+              value = catch(:verbalize_error) { action.send(:call) }
               outcome = action.instance_variable_get(:@verbalize_outcome) || :ok
               Result.new(outcome: outcome, value: value)
             end
@@ -54,7 +54,7 @@ describe Verbalize::BuildActionMethod do
         <<-METHOD.gsub(/^\s*/, '').chomp
             def self.call(some_lonely_optional_keyword: nil)
               action = new(some_lonely_optional_keyword: some_lonely_optional_keyword)
-              value = catch(:verbalize_error) { action.call }
+              value = catch(:verbalize_error) { action.send(:call) }
               outcome = action.instance_variable_get(:@verbalize_outcome) || :ok
               Result.new(outcome: outcome, value: value)
             end
@@ -71,7 +71,7 @@ describe Verbalize::BuildActionMethod do
         <<-METHOD.gsub(/^\s*/, '').chomp
             def self.call(some_required_keyword_1:, some_required_keyword_2:)
               action = new(some_required_keyword_1: some_required_keyword_1, some_required_keyword_2: some_required_keyword_2)
-              value = catch(:verbalize_error) { action.call }
+              value = catch(:verbalize_error) { action.send(:call) }
               outcome = action.instance_variable_get(:@verbalize_outcome) || :ok
               Result.new(outcome: outcome, value: value)
             end
@@ -88,7 +88,7 @@ describe Verbalize::BuildActionMethod do
         <<-METHOD.gsub(/^\s*/, '').chomp
             def self.call(some_optional_keyword_1: nil, some_optional_keyword_2: nil)
               action = new(some_optional_keyword_1: some_optional_keyword_1, some_optional_keyword_2: some_optional_keyword_2)
-              value = catch(:verbalize_error) { action.call }
+              value = catch(:verbalize_error) { action.send(:call) }
               outcome = action.instance_variable_get(:@verbalize_outcome) || :ok
               Result.new(outcome: outcome, value: value)
             end
@@ -106,7 +106,7 @@ describe Verbalize::BuildActionMethod do
         <<-METHOD.gsub(/^\s*/, '').chomp
             def self.call(some_required_keyword_1:, some_required_keyword_2:, some_optional_keyword_1: nil, some_optional_keyword_2: nil)
               action = new(some_required_keyword_1: some_required_keyword_1, some_required_keyword_2: some_required_keyword_2, some_optional_keyword_1: some_optional_keyword_1, some_optional_keyword_2: some_optional_keyword_2)
-              value = catch(:verbalize_error) { action.call }
+              value = catch(:verbalize_error) { action.send(:call) }
               outcome = action.instance_variable_get(:@verbalize_outcome) || :ok
               Result.new(outcome: outcome, value: value)
             end
