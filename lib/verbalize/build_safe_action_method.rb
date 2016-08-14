@@ -1,7 +1,7 @@
 require_relative 'build_method_base'
 
 module Verbalize
-  class BuildActionMethod < BuildMethodBase
+  class BuildSafeActionMethod < BuildMethodBase
     private
 
     def declaration

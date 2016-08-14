@@ -1,6 +1,6 @@
 require 'verbalize/version'
 require 'verbalize/build_initialize_method'
-require 'verbalize/build_action_method'
+require 'verbalize/build_safe_action_method'
 require 'verbalize/build_dangerous_action_method'
 require 'verbalize/build_attribute_readers'
 require 'verbalize/result'
@@ -36,7 +36,7 @@ module Verbalize
 
       optional_keywords = Array(optional)
 
-      class_eval BuildActionMethod.call(
+      class_eval BuildSafeActionMethod.call(
         required_keywords: required_keywords,
         optional_keywords: optional_keywords,
         method_name:       method_name
