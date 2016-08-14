@@ -9,7 +9,7 @@ module Verbalize
     end
 
     def body
-      "  new(#{initialize_keywords_and_values}).send(:call)"
+      "  new(#{initialize_keywords_and_values}).send(:#{method_name})"
     end
   end
 end
