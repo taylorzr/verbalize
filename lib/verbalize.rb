@@ -6,7 +6,9 @@ require 'verbalize/build_attribute_readers'
 require 'verbalize/result'
 
 module Verbalize
-  def fail!(failure_value)
+  VerbalizeError = Class.new(StandardError)
+
+  def fail!(failure_value = nil)
     throw(:verbalize_error, Result.new(outcome: :error, value: failure_value))
   end
 
@@ -70,6 +72,11 @@ module Verbalize
 
     def call!
       new.send(:call)
+    rescue UncaughtThrowError => uncaught_throw_error
+      fail_value = uncaught_throw_error.value.last
+      error = VerbalizeError.new("Unhandled fail! called with: #{fail_value.inspect}.")
+      error.set_backtrace(uncaught_throw_error.backtrace[2..-1])
+      raise error
     end
   end
 end

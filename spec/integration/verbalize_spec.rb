@@ -178,14 +178,46 @@ describe Verbalize do
       expect(some_outer_class.call).to eql([:error, :some_failure_message])
     end
 
-    it 'fails up to a parent action' do
+    it 'raises an error with a helpful message \
+    if an action fails without being handled' do
+      some_class = Class.new do
+        include Verbalize
+
+        def call
+          fail! :some_failure_message
+        end
+      end
+
+      expect { some_class.call! }.to raise_error(
+        Verbalize::VerbalizeError, 'Unhandled fail! called with: :some_failure_message.'
+      )
+    end
+
+    it 'raises an error with a helpful message if an action with keywords \
+    fails without being handled' do
+      some_class = Class.new do
+        include Verbalize
+
+        input :a, :b
+
+        def call
+          fail! :some_failure_message if b.zero?
+        end
+      end
+
+      expect { some_class.call!(a: 1, b: 0) }.to raise_error(
+        Verbalize::VerbalizeError, 'Unhandled fail! called with: :some_failure_message.'
+      )
+    end
+
+    it 'fails up to a parent action with keywords' do
       SomeInnerClass = Class.new do
         include Verbalize
 
         input :a, :b
 
         def call
-          fail! :some_failure_message if b == 0
+          fail! :some_failure_message if b.zero?
         end
       end
 
