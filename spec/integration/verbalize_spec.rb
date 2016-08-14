@@ -129,5 +129,77 @@ describe Verbalize do
         end.to raise_error(ArgumentError)
       end
     end
+
+    it 'fails up to a parent action' do
+      SomeInnerClass = Class.new do
+        include Verbalize
+
+        def call
+          fail! :some_failure_message
+        end
+      end
+
+      some_outer_class = Class.new do
+        include Verbalize
+
+        def call
+          SomeInnerClass.call!
+        end
+      end
+
+      expect(some_outer_class.call).to eql([:error, :some_failure_message])
+    end
+
+    it 'fails up multiple levels' do
+      SomeInnerInnerClass = Class.new do
+        include Verbalize
+
+        def call
+          fail! :some_failure_message
+        end
+      end
+
+      SomeInnerClass = Class.new do
+        include Verbalize
+
+        def call
+          SomeInnerInnerClass.call!
+        end
+      end
+
+      some_outer_class = Class.new do
+        include Verbalize
+
+        def call
+          SomeInnerClass.call!
+        end
+      end
+
+      expect(some_outer_class.call).to eql([:error, :some_failure_message])
+    end
+
+    it 'fails up to a parent action' do
+      SomeInnerClass = Class.new do
+        include Verbalize
+
+        input :a, :b
+
+        def call
+          fail! :some_failure_message if b == 0
+        end
+      end
+
+      some_outer_class = Class.new do
+        include Verbalize
+
+        input :a, :b
+
+        def call
+          SomeInnerClass.call!(a: a, b: b)
+        end
+      end
+
+      expect(some_outer_class.call(a: 1, b: 0)).to eql([:error, :some_failure_message])
+    end
   end
 end

@@ -11,9 +11,12 @@ module Verbalize
     def body
       [
         "action = new(#{initialize_keyword_arguments})",
-        "value = catch(:verbalize_error) { action.send(#{method_name.inspect}) }",
-        'outcome = action.instance_variable_get(:@verbalize_outcome) || :ok',
-        'Result.new(outcome: outcome, value: value)'
+        "result = catch(:verbalize_error) { action.send(#{method_name.inspect}) }",
+        'if result.is_a?(Result)',
+        'result',
+        'else',
+        'Result.new(outcome: :ok, value: result)',
+        'end'
       ].join("\n")
     end
 

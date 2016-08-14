@@ -1,13 +1,13 @@
 require 'verbalize/version'
 require 'verbalize/build_initialize_method'
 require 'verbalize/build_action_method'
+require 'verbalize/build_dangerous_action_method'
 require 'verbalize/build_attribute_readers'
 require 'verbalize/result'
 
 module Verbalize
   def fail!(failure_value)
-    @verbalize_outcome = :error
-    throw :verbalize_error, failure_value
+    throw(:verbalize_error, Result.new(outcome: :error, value: failure_value))
   end
 
   def self.included(target)
@@ -42,6 +42,12 @@ module Verbalize
         method_name:       method_name
       )
 
+      class_eval BuildDangerousActionMethod.call(
+        required_keywords: required_keywords,
+        optional_keywords: optional_keywords,
+        method_name:       method_name
+      )
+
       class_eval BuildInitializeMethod.call(
         required_keywords: required_keywords,
         optional_keywords: optional_keywords
@@ -53,10 +59,17 @@ module Verbalize
     end
 
     def call
-      action  = new
-      value   = catch(:verbalize_error) { action.send(:call) }
-      outcome = action.instance_variable_get(:@verbalize_outcome) || :ok
-      Result.new(outcome: outcome, value: value)
+      action = new
+      result = catch(:verbalize_error) { action.send(:call) }
+      if result.is_a?(Result)
+        result
+      else
+        Result.new(outcome: :ok, value: result)
+      end
+    end
+
+    def call!
+      new.send(:call)
     end
   end
 end
