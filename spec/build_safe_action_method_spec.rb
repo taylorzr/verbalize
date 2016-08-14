@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Verbalize::BuildSafeActionMethod do
-  describe '#build' do
+  describe '.call' do
     it 'builds a method string with no keywords' do
       result = described_class.call
 
