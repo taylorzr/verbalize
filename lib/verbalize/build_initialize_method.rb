@@ -12,7 +12,7 @@ module Verbalize
       return if all_keywords.empty?
 
       lines = all_keywords.map do |keyword|
-        "@#{keyword} = #{keyword}"
+        "  @#{keyword} = #{keyword}"
       end
 
       lines.join("\n")

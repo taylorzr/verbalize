@@ -9,15 +9,15 @@ module Verbalize
     end
 
     def body
-      [
-        "action = new(#{initialize_keyword_arguments})",
-        "result = catch(:verbalize_error) { action.send(#{method_name.inspect}) }",
-        'if result.is_a?(Result)',
-        'result',
-        'else',
-        'Result.new(outcome: :ok, value: result)',
-        'end'
-      ].join("\n")
+      <<-BODY.chomp
+  action = new(#{initialize_keyword_arguments})
+  result = catch(:verbalize_error) { action.send(#{method_name.inspect}) }
+  if result.is_a?(Result)
+    result
+  else
+    Result.new(outcome: :ok, value: result)
+  end
+      BODY
     end
 
     def initialize_keyword_arguments

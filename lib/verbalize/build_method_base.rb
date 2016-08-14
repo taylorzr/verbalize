@@ -22,7 +22,7 @@ class BuildMethodBase
   attr_reader :required_keywords, :optional_keywords, :method_name
 
   def parts
-    [declaration, body, 'end']
+    [declaration, body, "end\n"]
   end
 
   def declaration
