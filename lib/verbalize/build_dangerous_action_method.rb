@@ -9,11 +9,7 @@ module Verbalize
     end
 
     def body
-      "  new(#{initialize_keyword_arguments}).send(:call)"
-    end
-
-    def initialize_keyword_arguments
-      all_keywords.map { |variable| "#{variable}: #{variable}" }.join(', ')
+      "  new(#{initialize_keywords_and_values}).send(:call)"
     end
   end
 end

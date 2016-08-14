@@ -49,4 +49,8 @@ class BuildMethodBase
     return if all_keywords.empty?
     (required_keyword_segments + optional_keyword_segments).join(', ')
   end
+
+  def initialize_keywords_and_values
+    all_keywords.map { |variable| "#{variable}: #{variable}" }.join(', ')
+  end
 end

@@ -10,7 +10,7 @@ module Verbalize
 
     def body
       <<-BODY.chomp
-  action = new(#{initialize_keyword_arguments})
+  action = new(#{initialize_keywords_and_values})
   result = catch(:verbalize_error) { action.send(#{method_name.inspect}) }
   if result.is_a?(Result)
     result
@@ -18,10 +18,6 @@ module Verbalize
     Result.new(outcome: :ok, value: result)
   end
       BODY
-    end
-
-    def initialize_keyword_arguments
-      all_keywords.map { |variable| "#{variable}: #{variable}" }.join(', ')
     end
   end
 end
