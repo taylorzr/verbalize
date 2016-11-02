@@ -7,6 +7,7 @@ module Verbalize
     def succeeded?
       !failed?
     end
+    alias_method :success?, :succeeded?
 
     def failed?
       outcome == :error
