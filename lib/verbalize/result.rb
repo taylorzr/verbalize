@@ -1,8 +1,11 @@
 module Verbalize
-  class Result < Array
+  class Result
     def initialize(outcome:, value:)
-      super([outcome, value])
+      @outcome = outcome
+      @value   = value
     end
+
+    attr_reader :outcome, :value
 
     def succeeded?
       !failed?
@@ -12,12 +15,8 @@ module Verbalize
       outcome == :error
     end
 
-    def outcome
-      first
-    end
-
-    def value
-      last
+    def to_ary
+      [outcome, value]
     end
   end
 end

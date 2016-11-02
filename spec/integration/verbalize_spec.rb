@@ -147,7 +147,10 @@ describe Verbalize do
         end
       end
 
-      expect(some_outer_class.call).to eql([:error, :some_failure_message])
+      outcome, value = some_outer_class.call
+
+      expect(outcome).to eq :error
+      expect(value).to   eq :some_failure_message
     end
 
     it 'fails up multiple levels' do
@@ -175,7 +178,10 @@ describe Verbalize do
         end
       end
 
-      expect(some_outer_class.call).to eql([:error, :some_failure_message])
+      outcome, value = some_outer_class.call
+
+      expect(outcome).to eq :error
+      expect(value).to   eq :some_failure_message
     end
 
     it 'raises an error with a helpful message \
@@ -231,7 +237,10 @@ describe Verbalize do
         end
       end
 
-      expect(some_outer_class.call(a: 1, b: 0)).to eql([:error, :some_failure_message])
+      outcome, value = some_outer_class.call(a: 1, b: 0)
+
+      expect(outcome).to eq :error
+      expect(value).to   eq :some_failure_message
     end
   end
 end
