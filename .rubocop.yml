@@ -6,3 +6,6 @@ Metrics/LineLength:
 
 Documentation:
   Enabled: false
+
+Style/Alias:
+  EnforcedStyle: prefer_alias_method
