@@ -18,7 +18,8 @@ end
 result = Add.call(a: 35, b: 7)
 result.outcome # => :ok
 result.value # => 42
-result.success? # => true
+result.succeeded? # => true
+result.success? # alias for succeeded? => true
 result.failed? # => false
 
 outcome, value = Add.call(a: 35, b: 7)
