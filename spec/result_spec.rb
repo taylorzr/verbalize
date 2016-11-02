@@ -58,4 +58,21 @@ describe Verbalize::Result do
       expect(result.value).to eql(:some_value)
     end
   end
+
+  describe '#to_ary' do
+    it 'returns an array containing the outcome and value' do
+      instance = described_class.new(outcome: :not_error, value: 'foo')
+
+      expect(instance.to_ary).to eq [:not_error, 'foo']
+    end
+
+    it 'allows multiple assignment' do
+      instance = described_class.new(outcome: :not_error, value: 'foo')
+
+      outcome, value = instance
+
+      expect(outcome).to eq :not_error
+      expect(value).to eq 'foo'
+    end
+  end
 end
