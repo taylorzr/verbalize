@@ -43,6 +43,20 @@ describe Verbalize::Result do
     end
   end
 
+  describe '#failure?' do
+    it 'is false when the outcome is not :error' do
+      result = described_class.new(outcome: :not_error, value: nil)
+
+      expect(result).not_to be_failure
+    end
+
+    it 'is true when the outcome is :error' do
+      result = described_class.new(outcome: :error, value: nil)
+
+      expect(result).to be_failure
+    end
+  end
+
   describe '#outcome' do
     it 'is simply the outcome' do
       result = described_class.new(outcome: :some_outcome, value: nil)

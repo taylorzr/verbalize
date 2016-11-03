@@ -21,6 +21,7 @@ result.value # => 42
 result.succeeded? # => true
 result.success? # alias for succeeded? => true
 result.failed? # => false
+result.failure? # alias for failed? => false
 
 outcome, value = Add.call(a: 35, b: 7)
 outcome # => :ok

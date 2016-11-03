@@ -15,6 +15,7 @@ module Verbalize
     def failed?
       outcome == :error
     end
+    alias_method :failure?, :failed?
 
     def to_ary
       [outcome, value]
