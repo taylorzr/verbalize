@@ -6,10 +6,11 @@ require 'verbalize/build_attribute_readers'
 require 'verbalize/result'
 
 module Verbalize
+  THROWN_SYMBOL = :verbalize_error
   VerbalizeError = Class.new(StandardError)
 
   def fail!(failure_value = nil)
-    throw(:verbalize_error, Result.new(outcome: :error, value: failure_value))
+    throw(THROWN_SYMBOL, failure_value)
   end
 
   def self.included(target)
@@ -61,19 +62,30 @@ module Verbalize
     end
 
     def call
-      action = new
-      result = catch(:verbalize_error) { action.send(:call) }
-      if result.is_a?(Result)
-        result
-      else
-        Result.new(outcome: :ok, value: result)
-      end
+      __verbalized_send(:call)
     end
 
     def call!
-      new.send(:call)
+      __verbalized_send!(:call)
+    end
+
+    private
+
+    def __verbalized_send(method_name, *args)
+      outcome = :error
+      value = catch(:verbalize_error) do
+        value = new(*args).send(method_name)
+        # The outcome is :ok if the call didn't throw.
+        outcome = :ok
+        value
+      end
+      Result.new(outcome: outcome, value: value)
+    end
+
+    def __verbalized_send!(method_name, *args)
+      new(*args).send(method_name)
     rescue UncaughtThrowError => uncaught_throw_error
-      fail_value = uncaught_throw_error.value.value
+      fail_value = uncaught_throw_error.value
       error = VerbalizeError.new("Unhandled fail! called with: #{fail_value.inspect}.")
       error.set_backtrace(uncaught_throw_error.backtrace[2..-1])
       raise error

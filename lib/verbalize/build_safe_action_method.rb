@@ -9,15 +9,11 @@ module Verbalize
     end
 
     def body
-      <<-BODY.chomp
-  action = new(#{initialize_keywords_and_values})
-  result = catch(:verbalize_error) { action.send(#{method_name.inspect}) }
-  if result.is_a?(Result)
-    result
-  else
-    Result.new(outcome: :ok, value: result)
-  end
-      BODY
+      if all_keywords.empty?
+        "  __verbalized_send(:#{method_name})"
+      else
+        "  __verbalized_send(:#{method_name}, #{initialize_keywords_and_values})"
+      end
     end
   end
 end

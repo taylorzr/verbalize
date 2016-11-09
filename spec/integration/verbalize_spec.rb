@@ -15,9 +15,10 @@ describe Verbalize do
           end
         end
 
-        _outcome, value = some_class.call(a: 40, b: 2)
+        result = some_class.call(a: 40, b: 2)
 
-        expect(value).to eql(42)
+        expect(result).to be_success
+        expect(result.value).to eql(42)
       end
 
       it 'allows class & instance method to be named differently' do
@@ -31,9 +32,10 @@ describe Verbalize do
           end
         end
 
-        _outcome, value = some_class.some_method_name
+        result = some_class.some_method_name
 
-        expect(value).to eql(:some_method_result)
+        expect(result).to be_success
+        expect(result.value).to eql(:some_method_result)
       end
 
       it 'raises an error when you don’t specify any required argument' do
@@ -64,9 +66,10 @@ describe Verbalize do
           end
         end
 
-        _outcome, value = some_class.call(a: 40)
+        result = some_class.call(a: 40)
 
-        expect(value).to eql(42)
+        expect(result).to be_success
+        expect(result.value).to eql(42)
       end
 
       it 'allows you to fail an action and not execute remaining lines' do
@@ -81,10 +84,11 @@ describe Verbalize do
           end
         end
 
-        outcome, value = some_class.call(a: 1, b: 0)
+        result = some_class.call(a: 1, b: 0)
 
-        expect(outcome).to eql(:error)
-        expect(value).to eql('Are you crazy?!? You can’t divide by zero!')
+        expect(result).not_to be_success
+        expect(result).to be_failed
+        expect(result.value).to eql('Are you crazy?!? You can’t divide by zero!')
       end
     end
 
@@ -98,9 +102,10 @@ describe Verbalize do
           end
         end
 
-        _outcome, value = some_class.call
+        result = some_class.call
 
-        expect(value).to eql(:some_behavior)
+        expect(result).to be_success
+        expect(result.value).to eql(:some_behavior)
       end
 
       it 'allows you to fail an action and not execute remaining lines' do
@@ -113,10 +118,10 @@ describe Verbalize do
           end
         end
 
-        outcome, value = some_class.call
+        result = some_class.call
 
-        expect(outcome).to eql(:error)
-        expect(value).to eql('Are you crazy?!? You can’t divide by zero!')
+        expect(result).to be_failed
+        expect(result.value).to eql('Are you crazy?!? You can’t divide by zero!')
       end
 
       it 'raises an error if you specify unrecognize keyword/value arguments' do
@@ -147,10 +152,37 @@ describe Verbalize do
         end
       end
 
-      outcome, value = some_outer_class.call
+      result = some_outer_class.call
 
-      expect(outcome).to eq :error
-      expect(value).to   eq :some_failure_message
+      expect(result).not_to   be_success
+      expect(result).to       be_failed
+      expect(result.value).to eq :some_failure_message
+    end
+
+    it 'stubbed failures are captured by parent actions' do
+      SomeInnerClass = Class.new do
+        include Verbalize
+
+        def call
+          fail! :some_failure_message
+        end
+      end
+
+      some_outer_class = Class.new do
+        include Verbalize
+
+        def call
+          SomeInnerClass.call!
+        end
+      end
+
+      allow(SomeInnerClass).to receive(:call!).and_throw(Verbalize::THROWN_SYMBOL, 'foo error')
+
+      result = some_outer_class.call
+
+      expect(result).not_to   be_success
+      expect(result).to       be_failed
+      expect(result.value).to eq 'foo error'
     end
 
     it 'fails up multiple levels' do
