@@ -9,13 +9,11 @@ module Verbalize
     end
 
     def body
-      <<-BODY.chomp
-  new(#{initialize_keywords_and_values}).send(:#{method_name})
-rescue UncaughtThrowError => uncaught_throw_error
-  error = VerbalizeError.new("Unhandled fail! called with: \#{uncaught_throw_error.value.value.inspect}.")
-  error.set_backtrace(uncaught_throw_error.backtrace[2..-1])
-  raise error
-      BODY
+      if all_keywords.empty?
+        "  __verbalized_send!(:#{method_name})"
+      else
+        "  __verbalized_send!(:#{method_name}, #{initialize_keywords_and_values})"
+      end
     end
   end
 end

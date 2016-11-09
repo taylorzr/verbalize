@@ -7,13 +7,7 @@ describe Verbalize::BuildSafeActionMethod do
 
       expect(result).to eql(<<-METHOD)
 def self.call()
-  action = new()
-  result = catch(:verbalize_error) { action.send(:call) }
-  if result.is_a?(Result)
-    result
-  else
-    Result.new(outcome: :ok, value: result)
-  end
+  __verbalized_send(:call)
 end
       METHOD
     end
@@ -23,13 +17,7 @@ end
 
       expect(result).to eql(<<-METHOD)
 def self.some_action()
-  action = new()
-  result = catch(:verbalize_error) { action.send(:some_action) }
-  if result.is_a?(Result)
-    result
-  else
-    Result.new(outcome: :ok, value: result)
-  end
+  __verbalized_send(:some_action)
 end
       METHOD
     end
@@ -39,13 +27,7 @@ end
 
       expect(result).to eql(<<-METHOD)
 def self.call(some_lonely_required_keyword:)
-  action = new(some_lonely_required_keyword: some_lonely_required_keyword)
-  result = catch(:verbalize_error) { action.send(:call) }
-  if result.is_a?(Result)
-    result
-  else
-    Result.new(outcome: :ok, value: result)
-  end
+  __verbalized_send(:call, some_lonely_required_keyword: some_lonely_required_keyword)
 end
       METHOD
     end
@@ -55,13 +37,7 @@ end
 
       expect(result).to eql(<<-METHOD)
 def self.call(some_lonely_optional_keyword: nil)
-  action = new(some_lonely_optional_keyword: some_lonely_optional_keyword)
-  result = catch(:verbalize_error) { action.send(:call) }
-  if result.is_a?(Result)
-    result
-  else
-    Result.new(outcome: :ok, value: result)
-  end
+  __verbalized_send(:call, some_lonely_optional_keyword: some_lonely_optional_keyword)
 end
       METHOD
     end
@@ -73,13 +49,7 @@ end
 
       expect(result).to eql(<<-METHOD)
 def self.call(some_required_keyword_1:, some_required_keyword_2:)
-  action = new(some_required_keyword_1: some_required_keyword_1, some_required_keyword_2: some_required_keyword_2)
-  result = catch(:verbalize_error) { action.send(:call) }
-  if result.is_a?(Result)
-    result
-  else
-    Result.new(outcome: :ok, value: result)
-  end
+  __verbalized_send(:call, some_required_keyword_1: some_required_keyword_1, some_required_keyword_2: some_required_keyword_2)
 end
       METHOD
     end
@@ -91,13 +61,7 @@ end
 
       expect(result).to eql(<<-METHOD)
 def self.call(some_optional_keyword_1: nil, some_optional_keyword_2: nil)
-  action = new(some_optional_keyword_1: some_optional_keyword_1, some_optional_keyword_2: some_optional_keyword_2)
-  result = catch(:verbalize_error) { action.send(:call) }
-  if result.is_a?(Result)
-    result
-  else
-    Result.new(outcome: :ok, value: result)
-  end
+  __verbalized_send(:call, some_optional_keyword_1: some_optional_keyword_1, some_optional_keyword_2: some_optional_keyword_2)
 end
       METHOD
     end
@@ -110,13 +74,7 @@ end
 
       expect(result).to eql(<<-METHOD)
 def self.call(some_required_keyword_1:, some_required_keyword_2:, some_optional_keyword_1: nil, some_optional_keyword_2: nil)
-  action = new(some_required_keyword_1: some_required_keyword_1, some_required_keyword_2: some_required_keyword_2, some_optional_keyword_1: some_optional_keyword_1, some_optional_keyword_2: some_optional_keyword_2)
-  result = catch(:verbalize_error) { action.send(:call) }
-  if result.is_a?(Result)
-    result
-  else
-    Result.new(outcome: :ok, value: result)
-  end
+  __verbalized_send(:call, some_required_keyword_1: some_required_keyword_1, some_required_keyword_2: some_required_keyword_2, some_optional_keyword_1: some_optional_keyword_1, some_optional_keyword_2: some_optional_keyword_2)
 end
       METHOD
     end
