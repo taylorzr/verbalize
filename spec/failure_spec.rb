@@ -58,7 +58,7 @@ describe Verbalize::Failure do
     end
 
     it 'emits a deprecation warning' do
-      expected_message = %r{.*failure_spec.rb:\d+:in .*: `Verbalize::Result#value` is deprecated; use `Verbalize::Failure#error` instead for failed results\.  It will be removed in Verbalize version 2\.0}
+      expected_message = %r{.*failure_spec.rb:\d+:in .*: `Verbalize::Result#value` is deprecated; use `Verbalize::Failure#error` or `Verbalize::Success#value` instead\.  It will be removed from `Verbalize::Result` in Verbalize version 2\.0}
       result = described_class.new('some_error')
       expect {
         result.value
