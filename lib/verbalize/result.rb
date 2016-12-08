@@ -5,7 +5,7 @@ module Verbalize
       @value   = value
     end
 
-    attr_reader :outcome, :value
+    attr_reader :outcome
 
     def succeeded?
       !failed?
@@ -18,7 +18,12 @@ module Verbalize
     alias_method :failure?, :failed?
 
     def to_ary
-      [outcome, value]
+      [outcome, @value]
+    end
+
+    def value
+      warn Kernel.caller.first + ': `Verbalize::Result#value` is deprecated; use `Verbalize::Failure#error` or `Verbalize::Success#value` instead.  It will be removed from `Verbalize::Result` in Verbalize version 2.0'
+      @value
     end
   end
 end

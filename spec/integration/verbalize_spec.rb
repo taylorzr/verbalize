@@ -1,13 +1,37 @@
 require 'spec_helper'
 
 describe Verbalize do
+  let(:base_verbalize_class) do
+    Class.new do
+      include Verbalize
+    end
+  end
+
   describe '.verbalize' do
+    it 'returns an ErrorResult on failure' do
+      some_class = Class.new(base_verbalize_class) do
+        def call
+          fail!('Some error')
+        end
+      end
+
+      expect(some_class.call).to be_an_instance_of(Verbalize::Failure)
+    end
+
+    it 'returns a SuccessResult on success' do
+      some_class = Class.new(base_verbalize_class) do
+        def call
+          true
+        end
+      end
+
+      expect(some_class.call).to be_an_instance_of(Verbalize::Success)
+    end
+
     context 'with arguments' do
       it 'allows arguments to be defined and delegates the class method \
       to the instance method' do
-        some_class = Class.new do
-          include Verbalize
-
+        some_class = Class.new(base_verbalize_class) do
           input :a, :b
 
           def call
@@ -22,9 +46,7 @@ describe Verbalize do
       end
 
       it 'allows class & instance method to be named differently' do
-        some_class = Class.new do
-          include Verbalize
-
+        some_class = Class.new(base_verbalize_class) do
           verbalize :some_method_name
 
           def some_method_name
@@ -38,10 +60,8 @@ describe Verbalize do
         expect(result.value).to eql(:some_method_result)
       end
 
-      it 'raises an error when you don’t specify any required argument' do
-        some_class = Class.new do
-          include Verbalize
-
+      it 'raises an error when you don’t specify a required argument' do
+        some_class = Class.new(base_verbalize_class) do
           input :a, :b
 
           def call
@@ -52,9 +72,7 @@ describe Verbalize do
       end
 
       it 'allows you to specify an optional argument' do
-        some_class = Class.new do
-          include Verbalize
-
+        some_class = Class.new(base_verbalize_class) do
           input :a, optional: :b
 
           def call
@@ -73,9 +91,7 @@ describe Verbalize do
       end
 
       it 'allows you to fail an action and not execute remaining lines' do
-        some_class = Class.new do
-          include Verbalize
-
+        some_class = Class.new(base_verbalize_class) do
           input :a, :b
 
           def call
@@ -94,9 +110,7 @@ describe Verbalize do
 
     context 'without_arguments' do
       it 'still does something' do
-        some_class = Class.new do
-          include Verbalize
-
+        some_class = Class.new(base_verbalize_class) do
           def call
             :some_behavior
           end
@@ -109,9 +123,7 @@ describe Verbalize do
       end
 
       it 'allows you to fail an action and not execute remaining lines' do
-        some_class = Class.new do
-          include Verbalize
-
+        some_class = Class.new(base_verbalize_class) do
           def call
             fail! 'Are you crazy?!? You can’t divide by zero!'
             1 / 0
@@ -124,11 +136,9 @@ describe Verbalize do
         expect(result.value).to eql('Are you crazy?!? You can’t divide by zero!')
       end
 
-      it 'raises an error if you specify unrecognize keyword/value arguments' do
+      it 'raises an error if you specify unrecognized keyword/value arguments' do
         expect do
-          Class.new do
-            include Verbalize
-
+          Class.new(base_verbalize_class) do
             input improper: :usage
           end
         end.to raise_error(ArgumentError)
@@ -136,19 +146,16 @@ describe Verbalize do
     end
 
     it 'fails up to a parent action' do
-      SomeInnerClass = Class.new do
-        include Verbalize
-
+      some_inner_class = Class.new(base_verbalize_class) do
         def call
           fail! :some_failure_message
         end
       end
 
-      some_outer_class = Class.new do
-        include Verbalize
-
-        def call
-          SomeInnerClass.call!
+      some_outer_class = Class.new(base_verbalize_class)
+      some_outer_class.class_exec(some_inner_class) do |some_inner_class|
+        define_method(:call) do
+          some_inner_class.call!
         end
       end
 
@@ -160,23 +167,20 @@ describe Verbalize do
     end
 
     it 'stubbed failures are captured by parent actions' do
-      SomeInnerClass = Class.new do
-        include Verbalize
-
+      some_inner_class = Class.new(base_verbalize_class) do
         def call
           fail! :some_failure_message
         end
       end
 
-      some_outer_class = Class.new do
-        include Verbalize
-
-        def call
-          SomeInnerClass.call!
+      some_outer_class = Class.new(base_verbalize_class)
+      some_outer_class.class_exec(some_inner_class) do |some_inner_class|
+        define_method(:call) do
+          some_inner_class.call!
         end
       end
 
-      allow(SomeInnerClass).to receive(:call!).and_throw(Verbalize::THROWN_SYMBOL, 'foo error')
+      allow(some_inner_class).to receive(:call!).and_throw(Verbalize::THROWN_SYMBOL, 'foo error')
 
       result = some_outer_class.call
 
@@ -186,27 +190,23 @@ describe Verbalize do
     end
 
     it 'fails up multiple levels' do
-      SomeInnerInnerClass = Class.new do
-        include Verbalize
-
+      some_inner_inner_class = Class.new(base_verbalize_class) do
         def call
           fail! :some_failure_message
         end
       end
 
-      SomeInnerClass = Class.new do
-        include Verbalize
-
-        def call
-          SomeInnerInnerClass.call!
+      some_inner_class = Class.new(base_verbalize_class)
+      some_inner_class.class_exec(some_inner_inner_class) do |some_inner_inner_class|
+        define_method(:call) do
+          some_inner_inner_class.call!
         end
       end
 
-      some_outer_class = Class.new do
-        include Verbalize
-
-        def call
-          SomeInnerClass.call!
+      some_outer_class = Class.new(base_verbalize_class)
+      some_outer_class.class_exec(some_inner_class) do |some_inner_class|
+        define_method(:call) do
+          some_inner_class.call!
         end
       end
 
@@ -218,9 +218,7 @@ describe Verbalize do
 
     it 'raises an error with a helpful message \
     if an action fails without being handled' do
-      some_class = Class.new do
-        include Verbalize
-
+      some_class = Class.new(base_verbalize_class) do
         def call
           fail! :some_failure_message
         end
@@ -233,9 +231,7 @@ describe Verbalize do
 
     it 'raises an error with a helpful message if an action with keywords \
     fails without being handled' do
-      some_class = Class.new do
-        include Verbalize
-
+      some_class = Class.new(base_verbalize_class) do
         input :a, :b
 
         def call
@@ -249,9 +245,7 @@ describe Verbalize do
     end
 
     it 'fails up to a parent action with keywords' do
-      SomeInnerClass = Class.new do
-        include Verbalize
-
+      some_inner_class = Class.new(base_verbalize_class) do
         input :a, :b
 
         def call
@@ -259,13 +253,12 @@ describe Verbalize do
         end
       end
 
-      some_outer_class = Class.new do
-        include Verbalize
-
+      some_outer_class = Class.new(base_verbalize_class)
+      some_outer_class.class_exec(some_inner_class) do |some_inner_class|
         input :a, :b
 
-        def call
-          SomeInnerClass.call!(a: a, b: b)
+        define_method(:call) do
+          some_inner_class.call!(a: a, b: b)
         end
       end
 
