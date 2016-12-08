@@ -248,11 +248,6 @@ end
 
 #### Stubbing `call!`
 
-TODO: This needs work. If `call!` throws and the throw is not caught by another interactor, then the
-failed interactor will raise a `VerbalizeError`, not an `UncaughtThrowError`; however, if we raise a 
-`VerbalizeError` instead of throwing, then if the interactor is nested inside another interactor which would catch
-the `throw`, it will fail to catch the `VerbalizeError`.
-
 When an object calls a Verbalize interactor via `call!`, you can stub the response for the positive case with the value
 you expect to be returned.  When stubbing the negative case, you should instead throw `Verbalize::THROWN_SYMBOL`
 (and the error message, if desired):
