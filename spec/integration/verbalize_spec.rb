@@ -153,9 +153,9 @@ describe Verbalize do
       end
 
       some_outer_class = Class.new(base_verbalize_class)
-      some_outer_class.class_exec(some_inner_class) do |some_inner_class|
+      some_outer_class.class_exec(some_inner_class) do |interactor_class|
         define_method(:call) do
-          some_inner_class.call!
+          interactor_class.call!
         end
       end
 
@@ -174,9 +174,9 @@ describe Verbalize do
       end
 
       some_outer_class = Class.new(base_verbalize_class)
-      some_outer_class.class_exec(some_inner_class) do |some_inner_class|
+      some_outer_class.class_exec(some_inner_class) do |interactor_class|
         define_method(:call) do
-          some_inner_class.call!
+          interactor_class.call!
         end
       end
 
@@ -197,16 +197,16 @@ describe Verbalize do
       end
 
       some_inner_class = Class.new(base_verbalize_class)
-      some_inner_class.class_exec(some_inner_inner_class) do |some_inner_inner_class|
+      some_inner_class.class_exec(some_inner_inner_class) do |interactor_class|
         define_method(:call) do
-          some_inner_inner_class.call!
+          interactor_class.call!
         end
       end
 
       some_outer_class = Class.new(base_verbalize_class)
-      some_outer_class.class_exec(some_inner_class) do |some_inner_class|
+      some_outer_class.class_exec(some_inner_class) do |interactor_class|
         define_method(:call) do
-          some_inner_class.call!
+          interactor_class.call!
         end
       end
 
@@ -254,11 +254,11 @@ describe Verbalize do
       end
 
       some_outer_class = Class.new(base_verbalize_class)
-      some_outer_class.class_exec(some_inner_class) do |some_inner_class|
+      some_outer_class.class_exec(some_inner_class) do |interactor_class|
         input :a, :b
 
         define_method(:call) do
-          some_inner_class.call!(a: a, b: b)
+          interactor_class.call!(a: a, b: b)
         end
       end
 

@@ -6,8 +6,6 @@ module Verbalize
       super(outcome: :ok, value: value)
     end
 
-    def value
-      @value
-    end
+    attr_reader :value
   end
 end
