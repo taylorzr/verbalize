@@ -150,6 +150,145 @@ Comparison:
 
 ```
 
+## Testing
+
+### Happy Path
+
+When testing positive cases of a Verbalize interactor, it is recommended to test using the `call!` class method and
+assert on the result.  This implicitly ensures a successful result, and your tests will fail with a bang! if 
+something goes wrong:
+
+```ruby
+class MyInteractor
+  include Verbalize
+  
+  input :a
+  
+  def call
+    fail!('`a` must be less than 100!') if a >= 100
+    a + 1
+  end
+end
+
+it 'returns the expected result' do
+  result = MyInteractor.call!(a: 50)
+  expect(result).to eq 51
+end
+```
+
+### Sad Path
+
+When testing negative cases of a Verbalize interactor, it is recommended to test using the `call` non-bang 
+class method.  Use of `call!` here is not advised as it will result in an exception being thrown. Set assertions 
+on both the outcome and error value of the result:
+
+```ruby
+class MyInteractor
+  include Verbalize
+  
+  input :a
+  
+  def call
+    fail!('${a} is not less than 100!') if a >= 100
+    a + 1
+  end
+end
+  
+# rspec:
+it 'fails when the input is out of bounds' do
+  result = MyInteractor.call(a: 1000)
+  
+  expect(result).to be_failed
+  expect(result.value).to eq '1000 is not less than 100!'
+end
+```
+
+### Stubbing Responses
+
+When unit testing, it may be necessary to stub responses of Verbalize interactors. The approach required depends 
+on how the nested interactors are called by the object under test.
+ 
+#### Stubbing `call`
+
+When an object calls a Verbalize interactor via `call`, you can stub the response with a `Verbalize::Success` or
+`Verbalize::Failure` instance.
+
+Example:
+
+```ruby
+# rspec:
+describe Foo do
+  describe '#something' do
+    subject { described_class.new(foo: 'bar') }
+    
+    it 'does the thing' do
+      successful_result = Verbalize::Success.new(123)
+      allow(MyInteractor).to receive(:call)
+                               .with(a: 1)
+                               .and_return(successful_result)
+      
+      result = described_class.something
+      
+      expect(result).to eq 'baz'
+    end
+    
+    it 'returns an error when MyInteractor fails' do
+      failed_result = Verbalize::Failure.new('Y U NO!')
+      allow(MyInteractor).to receive(:call)
+                               .with(a: 3)
+                               .and_return(failed_result)
+      
+      expect {
+        described_class.something
+      }.to raise_error(FooError, 'I couldnt do the thing!')
+    end
+  end
+end
+```
+
+#### Stubbing `call!`
+
+TODO: This needs work. If `call!` throws and the throw is not caught by another interactor, then the
+failed interactor will raise a `VerbalizeError`, not an `UncaughtThrowError`; however, if we raise a 
+`VerbalizeError` instead of throwing, then if the interactor is nested inside another interactor which would catch
+the `throw`, it will fail to catch the `VerbalizeError`.
+
+When an object calls a Verbalize interactor via `call!`, you can stub the response for the positive case with the value
+you expect to be returned.  When stubbing the negative case, you should instead throw `Verbalize::THROWN_SYMBOL`
+(and the error message, if desired):
+
+Example:
+
+```ruby
+# rspec:
+describe Foo do
+  describe '#something' do
+    subject { described_class.new(foo: 'bar') }
+    
+    it 'does the thing' do
+      allow(MyInteractor).to receive(:call!)
+                               .with(a: 1)
+                               .and_return(123)
+      
+      result = described_class.something
+      
+      expect(result).to eq 'baz'
+    end
+    
+    it 'returns an error when MyInteractor fails' do
+      failed_result = Verbalize::Failure.new('Y U NO!')
+      allow(MyInteractor).to receive(:call)
+                               .with(a: 3)
+                               .and_throw(::Verbalize::THROWN_SYMBOL, 'the failure message, if any')
+      
+      expect {
+        described_class.something
+      }.to raise_error UncaughtThrowError
+    end
+  end
+end
+```
+
 ## Installation
 
 Add this line to your application's Gemfile:
