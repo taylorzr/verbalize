@@ -64,8 +64,7 @@ describe Verbalize do
         some_class = Class.new(base_verbalize_class) do
           input :a, :b
 
-          def call
-          end
+          def call; end
         end
 
         expect { some_class.call(a: 42) }.to raise_error(ArgumentError)
