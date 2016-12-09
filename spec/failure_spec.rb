@@ -42,11 +42,11 @@ describe Verbalize::Failure do
     end
   end
 
-  describe '#error' do
+  describe '#failure' do
     it 'is the error message' do
       result = described_class.new('some_error')
 
-      expect(result.error).to eq 'some_error'
+      expect(result.failure).to eq 'some_error'
     end
   end
 
@@ -58,9 +58,8 @@ describe Verbalize::Failure do
     end
 
     it 'emits a deprecation warning' do
-      expected_message = Regexp.compile('.*failure_spec.rb:\\d+:in .*: `Verbalize::Result#value` is deprecated; ' \
-                                          'use `Verbalize::Failure#error` or `Verbalize::Success#value` instead\\.' \
-                                          '  It will be removed from `Verbalize::Result` in Verbalize version 2\\.0')
+      expected_message = Regexp.compile('.*failure_spec.rb:\\d+:in .*: `Verbalize::Failure#value` is deprecated; ' \
+                                          'use `Verbalize::Failure#failure` instead')
       result = described_class.new('some_error')
       expect do
         result.value

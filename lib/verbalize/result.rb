@@ -22,8 +22,8 @@ module Verbalize
     end
 
     def value
-      warn Kernel.caller.first + ': `Verbalize::Result#value` is deprecated; use `Verbalize::Failure#error` or ' \
-        '`Verbalize::Success#value` instead.  It will be removed from `Verbalize::Result` in Verbalize version 2.0'
+      warn Kernel.caller.first + ': `Verbalize::Result#value` is deprecated and will be removed in Verbalize 2.0. '\
+        'Use `Verbalize::Failure#error` or `Verbalize::Success#value` instead.'
       @value
     end
   end
