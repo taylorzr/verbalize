@@ -262,6 +262,22 @@ describe Verbalize do
       )
     end
 
+    it 're-raises uncaught throw errors that do not use verbalize throw tag' do
+      some_class = Class.new do
+        include Verbalize
+
+        input :a, :b
+
+        def call
+          throw :nonverbalizethrow
+        end
+      end
+
+      expect {
+        some_class.call(a: 1, b: 0)
+      }.to raise_error(UncaughtThrowError, 'uncaught throw :nonverbalizethrow')
+    end
+
     it 'raises an error with a helpful message if an action with keywords \
     fails without being handled' do
       some_class = Class.new do

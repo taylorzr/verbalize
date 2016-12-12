@@ -84,6 +84,7 @@ module Verbalize
     def __verbalized_send!(method_name, *args)
       new(*args).send(method_name)
     rescue UncaughtThrowError => uncaught_throw_error
+      raise uncaught_throw_error unless uncaught_throw_error.tag == THROWN_SYMBOL
       fail_value = uncaught_throw_error.value
       error = VerbalizeError.new("Unhandled fail! called with: #{fail_value.inspect}.")
       error.set_backtrace(uncaught_throw_error.backtrace[2..-1])
