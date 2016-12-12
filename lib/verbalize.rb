@@ -3,7 +3,8 @@ require 'verbalize/build_initialize_method'
 require 'verbalize/build_safe_action_method'
 require 'verbalize/build_dangerous_action_method'
 require 'verbalize/build_attribute_readers'
-require 'verbalize/result'
+require 'verbalize/success'
+require 'verbalize/failure'
 
 module Verbalize
   THROWN_SYMBOL = :verbalize_error
@@ -72,14 +73,12 @@ module Verbalize
     private
 
     def __verbalized_send(method_name, *args)
-      outcome = :error
-      value = catch(:verbalize_error) do
+      error = catch(:verbalize_error) do
         value = new(*args).send(method_name)
-        # The outcome is :ok if the call didn't throw.
-        outcome = :ok
-        value
+        return Success.new(value)
       end
-      Result.new(outcome: outcome, value: value)
+
+      Failure.new(error)
     end
 
     def __verbalized_send!(method_name, *args)

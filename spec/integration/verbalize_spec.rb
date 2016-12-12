@@ -2,6 +2,30 @@ require 'spec_helper'
 
 describe Verbalize do
   describe '.verbalize' do
+    it 'returns a Verbalize::Failure instance on fail!' do
+      some_class = Class.new do
+        include Verbalize
+
+        def call
+          fail!('Some error')
+        end
+      end
+
+      expect(some_class.call).to be_an_instance_of(Verbalize::Failure)
+    end
+
+    it 'returns a Verbalize::Success instance on success' do
+      some_class = Class.new do
+        include Verbalize
+
+        def call
+          true
+        end
+      end
+
+      expect(some_class.call).to be_an_instance_of(Verbalize::Success)
+    end
+
     context 'with arguments' do
       it 'allows arguments to be defined and delegates the class method \
       to the instance method' do
@@ -38,14 +62,13 @@ describe Verbalize do
         expect(result.value).to eql(:some_method_result)
       end
 
-      it 'raises an error when you don’t specify any required argument' do
+      it 'raises an error when you don’t specify a required argument' do
         some_class = Class.new do
           include Verbalize
 
           input :a, :b
 
-          def call
-          end
+          def call; end
         end
 
         expect { some_class.call(a: 42) }.to raise_error(ArgumentError)
@@ -124,7 +147,7 @@ describe Verbalize do
         expect(result.value).to eql('Are you crazy?!? You can’t divide by zero!')
       end
 
-      it 'raises an error if you specify unrecognize keyword/value arguments' do
+      it 'raises an error if you specify unrecognized keyword/value arguments' do
         expect do
           Class.new do
             include Verbalize
@@ -136,7 +159,7 @@ describe Verbalize do
     end
 
     it 'fails up to a parent action' do
-      SomeInnerClass = Class.new do
+      some_inner_class = Class.new do
         include Verbalize
 
         def call
@@ -146,9 +169,11 @@ describe Verbalize do
 
       some_outer_class = Class.new do
         include Verbalize
+      end
 
-        def call
-          SomeInnerClass.call!
+      some_outer_class.class_exec(some_inner_class) do |interactor_class|
+        define_method(:call) do
+          interactor_class.call!
         end
       end
 
@@ -160,7 +185,7 @@ describe Verbalize do
     end
 
     it 'stubbed failures are captured by parent actions' do
-      SomeInnerClass = Class.new do
+      some_inner_class = Class.new do
         include Verbalize
 
         def call
@@ -170,13 +195,15 @@ describe Verbalize do
 
       some_outer_class = Class.new do
         include Verbalize
+      end
 
-        def call
-          SomeInnerClass.call!
+      some_outer_class.class_exec(some_inner_class) do |interactor_class|
+        define_method(:call) do
+          interactor_class.call!
         end
       end
 
-      allow(SomeInnerClass).to receive(:call!).and_throw(Verbalize::THROWN_SYMBOL, 'foo error')
+      allow(some_inner_class).to receive(:call!).and_throw(Verbalize::THROWN_SYMBOL, 'foo error')
 
       result = some_outer_class.call
 
@@ -186,7 +213,7 @@ describe Verbalize do
     end
 
     it 'fails up multiple levels' do
-      SomeInnerInnerClass = Class.new do
+      some_inner_inner_class = Class.new do
         include Verbalize
 
         def call
@@ -194,19 +221,23 @@ describe Verbalize do
         end
       end
 
-      SomeInnerClass = Class.new do
+      some_inner_class = Class.new do
         include Verbalize
+      end
 
-        def call
-          SomeInnerInnerClass.call!
+      some_inner_class.class_exec(some_inner_inner_class) do |interactor_class|
+        define_method(:call) do
+          interactor_class.call!
         end
       end
 
       some_outer_class = Class.new do
         include Verbalize
+      end
 
-        def call
-          SomeInnerClass.call!
+      some_outer_class.class_exec(some_inner_class) do |interactor_class|
+        define_method(:call) do
+          interactor_class.call!
         end
       end
 
@@ -249,7 +280,7 @@ describe Verbalize do
     end
 
     it 'fails up to a parent action with keywords' do
-      SomeInnerClass = Class.new do
+      some_inner_class = Class.new do
         include Verbalize
 
         input :a, :b
@@ -261,11 +292,13 @@ describe Verbalize do
 
       some_outer_class = Class.new do
         include Verbalize
+      end
 
+      some_outer_class.class_exec(some_inner_class) do |interactor_class|
         input :a, :b
 
-        def call
-          SomeInnerClass.call!(a: a, b: b)
+        define_method(:call) do
+          interactor_class.call!(a: a, b: b)
         end
       end
 

@@ -71,6 +71,16 @@ describe Verbalize::Result do
 
       expect(result.value).to eql(:some_value)
     end
+
+    it 'emits a deprecation warning' do
+      expected_message = Regexp.compile('.*result_spec.rb:\\d+:in .*: `Verbalize::Result#value` is deprecated ' \
+                                          'and will be removed in Verbalize 2\\.0\\. Use `Verbalize::Failure#error` ' \
+                                          'or `Verbalize::Success#value` instead\\.')
+      result = described_class.new(outcome: nil, value: :some_value)
+      expect do
+        result.value
+      end.to output(expected_message).to_stderr
+    end
   end
 
   describe '#to_ary' do
