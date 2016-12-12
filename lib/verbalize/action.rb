@@ -31,6 +31,12 @@ module Verbalize
         **other_keyword_arguments
       )
 
+        if method_name != :call
+          warn Kernel.caller[1] + ': use of custom method names for Actions is deprecated and support ' \
+            'for it will be dropped in Verbalize v2.0.  The `verbalize` method will also be removed.' \
+            'Use `input` and define `#call` on your Action class instead.'
+        end
+
         unless other_keyword_arguments.empty?
           raise(
             ArgumentError,
