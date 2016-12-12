@@ -249,7 +249,7 @@ describe Foo do
       
       expect {
         described_class.do_something
-      }.to raise_error(StandardError, 'I couldnt do the thing!')
+      }.to raise_error(Verbalize::VerbalizeError, 'I couldnt do the thing!')
     end
   end
 end
