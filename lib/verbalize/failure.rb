@@ -4,8 +4,8 @@ module Verbalize
   class Failure < Result
     extend Gem::Deprecate
 
-    def initialize(error)
-      super(outcome: :error, value: error)
+    def initialize(failure)
+      super(outcome: :error, value: failure)
     end
 
     def failure

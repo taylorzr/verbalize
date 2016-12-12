@@ -165,7 +165,7 @@ class MyInteractor
   input :a
   
   def call
-    fail!('`a` must be less than 100!') if a >= 100
+    fail!('#{a} is greater than than 100!') if a >= 100
     a + 1
   end
 end
@@ -189,7 +189,7 @@ class MyInteractor
   input :a
   
   def call
-    fail!('${a} is not less than 100!') if a >= 100
+    fail!('#{a} is greater than 100!') if a >= 100
     a + 1
   end
 end
@@ -199,7 +199,7 @@ it 'fails when the input is out of bounds' do
   result = MyInteractor.call(a: 1000)
   
   expect(result).to be_failed
-  expect(result.value).to eq '1000 is not less than 100!'
+  expect(result.value).to eq '1000 is greater than 100!'
 end
 ```
 
@@ -216,31 +216,40 @@ When an object calls a Verbalize interactor via `call`, you can stub the respons
 Example:
 
 ```ruby
+class Foo
+  def do_something
+    result = MyInteractor.call(a: 1)
+    raise 'I couldn\'t do the thing!' if result.failure?
+    
+    'baz'
+  end
+end
+
 # rspec:
 describe Foo do
   describe '#something' do
     subject { described_class.new(foo: 'bar') }
     
-    it 'does the thing' do
+    it 'does the thing when my interactor succeeds' do
       successful_result = Verbalize::Success.new(123)
       allow(MyInteractor).to receive(:call)
                                .with(a: 1)
                                .and_return(successful_result)
       
-      result = described_class.something
+      result = described_class.do_something
       
       expect(result).to eq 'baz'
     end
     
-    it 'returns an error when MyInteractor fails' do
+    it 'raises an error when MyInteractor fails' do
       failed_result = Verbalize::Failure.new('Y U NO!')
       allow(MyInteractor).to receive(:call)
                                .with(a: 3)
                                .and_return(failed_result)
       
       expect {
-        described_class.something
-      }.to raise_error(FooError, 'I couldnt do the thing!')
+        described_class.do_something
+      }.to raise_error(StandardError, 'I couldnt do the thing!')
     end
   end
 end
