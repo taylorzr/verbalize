@@ -8,9 +8,18 @@ require 'verbalize/failure'
 
 module Verbalize
   THROWN_SYMBOL = :verbalize_error
-  VerbalizeError = Class.new(StandardError)
+  VerbalizeError = Class.new(StandardError) do
+    def initialize(failure)
+      @failure = failure
+      message = "Unhandled fail! called with: #{failure.inspect}."
+      super(message)
+    end
+
+    attr_reader :failure
+  end
 
   def fail!(failure_value = nil)
+    # Maybe we should wrap the `failure_value` in a Failure object here instead of throwing the raw value up the stack?
     throw(THROWN_SYMBOL, failure_value)
   end
 
@@ -79,13 +88,16 @@ module Verbalize
       end
 
       Failure.new(error)
+    rescue VerbalizeError => e
+      Failure.new(e.failure)
     end
 
     def __verbalized_send!(method_name, *args)
       new(*args).send(method_name)
     rescue UncaughtThrowError => uncaught_throw_error
-      fail_value = uncaught_throw_error.value
-      error = VerbalizeError.new("Unhandled fail! called with: #{fail_value.inspect}.")
+      raise uncaught_throw_error unless uncaught_throw_error.tag == THROWN_SYMBOL
+      failure = uncaught_throw_error.value
+      error = VerbalizeError.new(failure)
       error.set_backtrace(uncaught_throw_error.backtrace[2..-1])
       raise error
     end

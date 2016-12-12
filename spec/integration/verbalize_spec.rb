@@ -203,13 +203,36 @@ describe Verbalize do
         end
       end
 
-      allow(some_inner_class).to receive(:call!).and_throw(Verbalize::THROWN_SYMBOL, 'foo error')
+      allow(some_inner_class).to receive(:call!).and_raise(Verbalize::VerbalizeError, something: 'this hash could also be any other kind of object')
 
       result = some_outer_class.call
 
       expect(result).not_to   be_success
       expect(result).to       be_failed
-      expect(result.value).to eq 'foo error'
+      expect(result.failure).to eq({something: 'this hash could also be any other kind of object'})
+    end
+
+    it 'stubbed failures are raised correctly to non-Verbalize parent classes' do
+      some_inner_class = Class.new do
+        include Verbalize
+
+        def call
+          fail! :some_failure_message
+        end
+      end
+
+      non_verbalize_class = Class.new
+      non_verbalize_class.class_exec(some_inner_class) do |interactor_class|
+        define_method(:do_something) do
+          interactor_class.call!
+        end
+      end
+
+      allow(some_inner_class).to receive(:call!).and_raise(Verbalize::VerbalizeError, something: 'this hash could also be any other kind of object')
+
+      expect {
+        non_verbalize_class.new.do_something
+      }.to raise_error(Verbalize::VerbalizeError, "Unhandled fail! called with: {:something=>\"this hash could also be any other kind of object\"}.")
     end
 
     it 'fails up multiple levels' do
@@ -260,6 +283,22 @@ describe Verbalize do
       expect { some_class.call! }.to raise_error(
         Verbalize::VerbalizeError, 'Unhandled fail! called with: :some_failure_message.'
       )
+    end
+
+    it 're-raises uncaught throw errors that do not use verbalize throw tag' do
+      some_class = Class.new do
+        include Verbalize
+
+        input :a, :b
+
+        def call
+          throw :nonverbalizethrow
+        end
+      end
+
+      expect {
+        some_class.call(a: 1, b: 0)
+      }.to raise_error(UncaughtThrowError, 'uncaught throw :nonverbalizethrow')
     end
 
     it 'raises an error with a helpful message if an action with keywords \
