@@ -1,54 +1,56 @@
-class BuildMethodBase
-  def self.call(required_keywords: [], optional_keywords: [])
-    new(
-      required_keywords: required_keywords,
-      optional_keywords: optional_keywords
-    ).call
-  end
+module Verbalize
+  class BuildMethodBase
+    def self.call(required_keywords: [], optional_keywords: [])
+      new(
+        required_keywords: required_keywords,
+        optional_keywords: optional_keywords
+      ).call
+    end
 
-  def initialize(required_keywords: [], optional_keywords: [])
-    @required_keywords = required_keywords
-    @optional_keywords = optional_keywords
-  end
+    def initialize(required_keywords: [], optional_keywords: [])
+      @required_keywords = required_keywords
+      @optional_keywords = optional_keywords
+    end
 
-  def call
-    parts.compact.join "\n"
-  end
+    def call
+      parts.compact.join "\n"
+    end
 
-  private
+    private
 
-  attr_reader :required_keywords, :optional_keywords
+    attr_reader :required_keywords, :optional_keywords
 
-  def parts
-    [declaration, body, "end\n"]
-  end
+    def parts
+      [declaration, body, "end\n"]
+    end
 
-  def declaration
-    raise NotImplementedError
-  end
+    def declaration
+      raise NotImplementedError
+    end
 
-  def body
-    raise NotImplementedError
-  end
+    def body
+      raise NotImplementedError
+    end
 
-  def all_keywords
-    required_keywords + optional_keywords
-  end
+    def all_keywords
+      required_keywords + optional_keywords
+    end
 
-  def required_keyword_segments
-    required_keywords.map { |keyword| "#{keyword}:" }
-  end
+    def required_keyword_segments
+      required_keywords.map { |keyword| "#{keyword}:" }
+    end
 
-  def optional_keyword_segments
-    optional_keywords.map { |keyword| "#{keyword}: nil" }
-  end
+    def optional_keyword_segments
+      optional_keywords.map { |keyword| "#{keyword}: nil" }
+    end
 
-  def declaration_keyword_arguments
-    return if all_keywords.empty?
-    (required_keyword_segments + optional_keyword_segments).join(', ')
-  end
+    def declaration_keyword_arguments
+      return if all_keywords.empty?
+      (required_keyword_segments + optional_keyword_segments).join(', ')
+    end
 
-  def initialize_keywords_and_values
-    all_keywords.map { |variable| "#{variable}: #{variable}" }.join(', ')
+    def initialize_keywords_and_values
+      all_keywords.map { |variable| "#{variable}: #{variable}" }.join(', ')
+    end
   end
 end
