@@ -14,9 +14,9 @@ module Verbalize
     end
 
     def value
-      raise Verbalize::Error, 'You called #value on a Failure result.  You should never use `Verbalize::Action#call` without also ' \
-        'explicitly handling potential errors.  Please use `Verbalize::Action#call!` to return a value directly on ' \
-        'successful execution of an action, or handle the error case explicitly if using `#call`.'
+      raise Verbalize::Error, 'You called #value on a Failure result.  You should never use `Verbalize::Action#call` ' \
+        'without also explicitly handling potential errors.  Please use `Verbalize::Action#call!` to return a value ' \
+        'directly on successful execution of an action, or handle the error case explicitly if using `#call`.'
     end
   end
 end

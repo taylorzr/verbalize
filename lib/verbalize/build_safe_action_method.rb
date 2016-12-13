@@ -10,7 +10,7 @@ module Verbalize
 
     def body
       if all_keywords.empty?
-        "  __verbalized_send(:call)"
+        '  __verbalized_send(:call)'
       else
         "  __verbalized_send(:call, #{initialize_keywords_and_values})"
       end

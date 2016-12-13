@@ -21,7 +21,7 @@ module Verbalize
     module ClassMethods
       def input( # rubocop:disable Metrics/MethodLength
         *required_keywords,
-        optional:    [],
+        optional: [],
         **other_keyword_arguments
       )
         unless other_keyword_arguments.empty?
