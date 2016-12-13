@@ -54,26 +54,30 @@ module Verbalize
       end
 
       def call
-        __verbalized_send(:call)
+        __verbalized_send
       end
 
       def call!
-        __verbalized_send!(:call)
+        __verbalized_send!
       end
 
       private
 
-      def __verbalized_send(method_name, *args)
+      def perform(*args)
+        new(*args).send(:call)
+      end
+
+      def __verbalized_send(*args)
         error = catch(:verbalize_error) do
-          value = new(*args).send(method_name)
+          value = perform(*args)
           return Success.new(value)
         end
 
         Failure.new(error)
       end
 
-      def __verbalized_send!(method_name, *args)
-        new(*args).send(method_name)
+      def __verbalized_send!(*args)
+        perform(*args)
       rescue UncaughtThrowError => uncaught_throw_error
         fail_value = uncaught_throw_error.value
         error = Verbalize::Error.new("Unhandled fail! called with: #{fail_value.inspect}.")
