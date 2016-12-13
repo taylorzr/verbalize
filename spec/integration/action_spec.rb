@@ -66,7 +66,7 @@ describe Verbalize::Action do
         expected_message = Regexp.compile('action_spec.rb:\d+.*use of custom method names for Actions is ' \
                                           'deprecated.* define `#call` on your Action class instead')
         expect do
-          some_class = Class.new do
+          Class.new do
             include Verbalize::Action
 
             verbalize :some_method_name
