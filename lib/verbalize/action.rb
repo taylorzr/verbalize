@@ -83,7 +83,7 @@ module Verbalize
         new(*args).send(method_name)
       rescue UncaughtThrowError => uncaught_throw_error
         fail_value = uncaught_throw_error.value
-        error = VerbalizeError.new("Unhandled fail! called with: #{fail_value.inspect}.")
+        error = Verbalize::Error.new("Unhandled fail! called with: #{fail_value.inspect}.")
         error.set_backtrace(uncaught_throw_error.backtrace[2..-1])
         raise error
       end

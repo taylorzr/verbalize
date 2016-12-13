@@ -241,7 +241,7 @@ describe Verbalize::Action do
       end
 
       expect { some_class.call! }.to raise_error(
-        Verbalize::VerbalizeError, 'Unhandled fail! called with: :some_failure_message.'
+        Verbalize::Error, 'Unhandled fail! called with: :some_failure_message.'
       )
     end
 
@@ -258,7 +258,7 @@ describe Verbalize::Action do
       end
 
       expect { some_class.call!(a: 1, b: 0) }.to raise_error(
-        Verbalize::VerbalizeError, 'Unhandled fail! called with: :some_failure_message.'
+        Verbalize::Error, 'Unhandled fail! called with: :some_failure_message.'
       )
     end
 

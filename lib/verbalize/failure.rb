@@ -1,4 +1,5 @@
 require_relative 'result'
+require_relative 'error'
 
 module Verbalize
   class Failure < Result
@@ -13,10 +14,9 @@ module Verbalize
     end
 
     def value
-      warn Kernel.caller.first + ': `Verbalize::Failure#value` is deprecated; use `Verbalize::Failure#failure` '\
-        'instead when explicitly handling failures. `Verbalize::Failure#value` will raise an exception in Verbalize '\
-        '2.0 to prevent accidental use of `#value` on failure results without explicit error handling. '
-      @value
+      raise Verbalize::Error, 'You called #value on a Failure result.  You should never use `Verbalize::Action#call` without also ' \
+        'explicitly handling potential errors.  Please use `Verbalize::Action#call!` to return a value directly on ' \
+        'successful execution of an action, or handle the error case explicitly if using `#call`.'
     end
   end
 end
