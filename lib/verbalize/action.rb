@@ -19,20 +19,11 @@ module Verbalize
     end
 
     module ClassMethods
-      def verbalize(*arguments, **keyword_arguments)
-        method_name, *arguments = arguments
-        input(*arguments, method_name: method_name, **keyword_arguments)
-      end
-
       def input( # rubocop:disable Metrics/MethodLength
         *required_keywords,
         optional:    [],
-        method_name: :call,
         **other_keyword_arguments
       )
-
-        deprecate_custom_methods(method_name)
-
         unless other_keyword_arguments.empty?
           raise(
             ArgumentError,
@@ -44,14 +35,12 @@ module Verbalize
 
         class_eval BuildSafeActionMethod.call(
           required_keywords: required_keywords,
-          optional_keywords: optional_keywords,
-          method_name:       method_name
+          optional_keywords: optional_keywords
         )
 
         class_eval BuildDangerousActionMethod.call(
           required_keywords: required_keywords,
-          optional_keywords: optional_keywords,
-          method_name:       method_name
+          optional_keywords: optional_keywords
         )
 
         class_eval BuildInitializeMethod.call(

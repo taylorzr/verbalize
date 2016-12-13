@@ -45,35 +45,6 @@ describe Verbalize::Action do
         expect(result.value).to eql(42)
       end
 
-      it 'allows class & instance method to be named differently' do
-        some_class = Class.new do
-          include Verbalize::Action
-
-          verbalize :some_method_name
-
-          def some_method_name
-            :some_method_result
-          end
-        end
-
-        result = some_class.some_method_name
-
-        expect(result).to be_success
-        expect(result.value).to eql(:some_method_result)
-      end
-
-      it 'using custom method name emits a deprecation warning' do
-        expected_message = Regexp.compile('action_spec.rb:\d+.*use of custom method names for Actions is ' \
-                                          'deprecated.* define `#call` on your Action class instead')
-        expect do
-          Class.new do
-            include Verbalize::Action
-
-            verbalize :some_method_name
-          end
-        end.to output(expected_message).to_stderr
-      end
-
       it 'raises an error when you don’t specify a required argument' do
         some_class = Class.new do
           include Verbalize::Action

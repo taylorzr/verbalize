@@ -1,16 +1,14 @@
 class BuildMethodBase
-  def self.call(required_keywords: [], optional_keywords: [], method_name: :call)
+  def self.call(required_keywords: [], optional_keywords: [])
     new(
       required_keywords: required_keywords,
-      optional_keywords: optional_keywords,
-      method_name:       method_name
+      optional_keywords: optional_keywords
     ).call
   end
 
-  def initialize(required_keywords: [], optional_keywords: [], method_name: :call)
+  def initialize(required_keywords: [], optional_keywords: [])
     @required_keywords = required_keywords
     @optional_keywords = optional_keywords
-    @method_name       = method_name
   end
 
   def call
@@ -19,7 +17,7 @@ class BuildMethodBase
 
   private
 
-  attr_reader :required_keywords, :optional_keywords, :method_name
+  attr_reader :required_keywords, :optional_keywords
 
   def parts
     [declaration, body, "end\n"]

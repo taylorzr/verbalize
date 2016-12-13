@@ -12,16 +12,6 @@ end
       METHOD
     end
 
-    it 'builds a method string with no keywords and a given method name' do
-      result = described_class.call(method_name: :some_action)
-
-      expect(result).to eql(<<-METHOD)
-def self.some_action()
-  __verbalized_send(:some_action)
-end
-      METHOD
-    end
-
     it 'builds a method string with one required keyword' do
       result = described_class.call(required_keywords: [:some_lonely_required_keyword])
 
