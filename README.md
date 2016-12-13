@@ -205,89 +205,69 @@ end
 
 ### Stubbing Responses
 
-When unit testing, it may be necessary to stub responses of Actions. The approach required depends 
-on how the nested actions are called by the object under test.
+When unit testing, it may be necessary to stub the responses of Verbalize actions.  To correctly stub responses,
+you should __always__ stub the `MyAction.perform` class method on the action class being stubbed per the 
+instructions below.  __Never__ stub the `call` or `call!` methods directly.
+
+Stubbing `.perform` will enable `Verbalize` to wrap results correctly for references to either `call` or `call!`.
  
-#### Stubbing `call`
+#### Stubbing Successful Responses
 
-When an object calls a `Verbalize::Action` via `call`, you can stub the response with a `Verbalize::Success` or
-`Verbalize::Failure` instance.
+To simulate a successful response of the `Verbalize::Action` being stubbed, you should stub the `MyAction.perform`
+class method to return the __value__ you expect the `MyAction#call` instance method to return.
 
-Example:
+For example, if you expect the action to return the value `123` on success:
 
 ```ruby
 class Foo
-  def do_something
+  def self.multiply_by(multiple)
     result = MyAction.call(a: 1)
-    raise 'I couldn\'t do the thing!' if result.failure?
+    raise "I couldn't do the thing!" if result.failure?
     
-    'baz'
+    result.value * multiple
   end
 end
 
 # rspec:
 describe Foo do
   describe '#something' do
-    subject { described_class.new(foo: 'bar') }
-    
-    it 'does the thing when my action succeeds' do
-      successful_result = Verbalize::Success.new(123)
-      allow(MyAction).to receive(:call)
-                               .with(a: 1)
-                               .and_return(successful_result)
+    it 'does the thing when MyAction succeeds' do
+      # Simulate the successful result
+      allow(MyAction).to receive(:perform)
+        .with(a: 1)
+        .and_return(123)
       
-      result = described_class.do_something
+      result = described_class.multiply_by(100)
       
-      expect(result).to eq 'baz'
-    end
-    
-    it 'raises an error when MyAction fails' do
-      failed_result = Verbalize::Failure.new('Y U NO!')
-      allow(MyAction).to receive(:call)
-                               .with(a: 3)
-                               .and_return(failed_result)
-      
-      expect {
-        described_class.do_something
-      }.to raise_error(StandardError, 'I couldnt do the thing!')
+      expect(result).to eq 12300
     end
   end
 end
 ```
 
-#### Stubbing `call!`
+#### Stubbing Failure Responses
 
-When an object calls a `Verbalize::Action` via `call!`, you can stub the response for the positive case with the value
-you expect to be returned.  When stubbing the negative case, you should instead throw `Verbalize::THROWN_SYMBOL`
-(and the error message, if desired):
+To simulate a __failure__ response of the `Verbalize::Action` being stubbed, you should stub the `MyAction.perform`
+class method to __throw__ `::Verbalize::THROWN_SYMBOL` with the __message__ you expect `MyAction#call` to throw
+when the simulated failure occurs.
 
-Example:
+For example, when you expect the outer class to raise an exception when MyAction fails:
 
 ```ruby
+# See also: Foo class definition in Stubbing Successful Responses above
+
 # rspec:
 describe Foo do
-  describe '#something' do
-    subject { described_class.new(foo: 'bar') }
-    
-    it 'does the thing' do
-      allow(MyAction).to receive(:call!)
-                               .with(a: 1)
-                               .and_return(123)
-      
-      result = described_class.something
-      
-      expect(result).to eq 'baz'
-    end
-    
-    it 'returns an error when MyAction fails' do
-      failed_result = Verbalize::Failure.new('Y U NO!')
-      allow(MyAction).to receive(:call)
-                               .with(a: 3)
-                               .and_throw(::Verbalize::THROWN_SYMBOL, 'the failure message, if any')
+  describe '#multiply_by' do
+    it 'raises an error when MyAction fails' do
+      # Simulate the failure
+      allow(MyAction).to receive(:perform)
+        .with(a: 1)
+        .and_throw(::Verbalize::THROWN_SYMBOL, 'Y U NO!')
       
       expect {
-        described_class.something
-      }.to raise_error UncaughtThrowError
+        described_class.multiply_by(100)
+      }.to raise_error "I couldn't do the thing!"
     end
   end
 end

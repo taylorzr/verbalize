@@ -167,8 +167,8 @@ describe Verbalize::Action do
       expect(result.failure).to eq :some_failure_message
     end
 
-    it 'stubbed failures are captured by parent actions' do
-      some_inner_class = Class.new do
+    it 'stubbed failures return a Verbalize::Falure on `call`' do
+      some_action = Class.new do
         include Verbalize::Action
 
         def call
@@ -176,23 +176,29 @@ describe Verbalize::Action do
         end
       end
 
-      some_outer_class = Class.new do
-        include Verbalize::Action
-      end
+      allow(some_action).to receive(:perform).and_throw(described_class::THROWN_SYMBOL, 'foo error')
 
-      some_outer_class.class_exec(some_inner_class) do |interactor_class|
-        define_method(:call) do
-          interactor_class.call!
-        end
-      end
-
-      allow(some_inner_class).to receive(:call!).and_throw(described_class::THROWN_SYMBOL, 'foo error')
-
-      result = some_outer_class.call
+      result = some_action.call
 
       expect(result).not_to   be_success
       expect(result).to       be_failed
       expect(result.failure).to eq 'foo error'
+    end
+
+    it 'stubbed failures raise a Verbalize::Error when using `call!`' do
+      some_action = Class.new do
+        include Verbalize::Action
+
+        def call
+          fail! :some_failure_message
+        end
+      end
+
+      allow(some_action).to receive(:perform).and_throw(described_class::THROWN_SYMBOL, 'foo error')
+
+      expect do
+        some_action.call!
+      end.to raise_error(Verbalize::Error, 'Unhandled fail! called with: "foo error".')
     end
 
     it 'fails up multiple levels' do
