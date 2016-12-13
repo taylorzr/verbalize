@@ -32,6 +32,10 @@ module Verbalize
       raise NotImplementedError
     end
 
+    def declare(method_name)
+      "def #{method_name}(#{declaration_keyword_arguments})"
+    end
+
     def all_keywords
       required_keywords + optional_keywords
     end

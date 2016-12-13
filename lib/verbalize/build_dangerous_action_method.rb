@@ -5,7 +5,7 @@ module Verbalize
     private
 
     def declaration
-      "def self.call!(#{declaration_keyword_arguments})"
+      declare('self.call!')
     end
 
     def body
