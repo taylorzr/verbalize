@@ -6,7 +6,7 @@
 
 ```ruby
 class Add
-  include Verbalize
+  include Verbalize::Action
 
   input :a, :b
 
@@ -30,7 +30,7 @@ value # => 42
 
 ```ruby
 class Add
-  include Verbalize
+  include Verbalize::Action
 
   input optional: [:a, :b]
 
@@ -55,7 +55,7 @@ Add.call(a: 660, b: 6) # => [:ok, 666]
 
 ```ruby
 class Divide
-  include Verbalize
+  include Verbalize::Action
 
   input :a, :b
 
@@ -96,7 +96,7 @@ class RubyAdd
 end
 
 class VerbalizeAdd
-  include Verbalize
+  include Verbalize::Action
 
   input :a, :b
 
@@ -154,13 +154,13 @@ Comparison:
 
 ### Happy Path
 
-When testing positive cases of a Verbalize interactor, it is recommended to test using the `call!` class method and
+When testing positive cases of a `Verbalize::Action`, it is recommended to test using the `call!` class method and
 assert on the result.  This implicitly ensures a successful result, and your tests will fail with a bang! if 
 something goes wrong:
 
 ```ruby
-class MyInteractor
-  include Verbalize
+class MyAction
+  include Verbalize::Action
   
   input :a
   
@@ -171,20 +171,20 @@ class MyInteractor
 end
 
 it 'returns the expected result' do
-  result = MyInteractor.call!(a: 50)
+  result = MyAction.call!(a: 50)
   expect(result).to eq 51
 end
 ```
 
 ### Sad Path
 
-When testing negative cases of a Verbalize interactor, it is recommended to test using the `call` non-bang 
+When testing negative cases of a `Verbalize::Action`, it is recommended to test using the `call` non-bang 
 class method.  Use of `call!` here is not advised as it will result in an exception being thrown. Set assertions 
 on both the outcome and error value of the result:
 
 ```ruby
-class MyInteractor
-  include Verbalize
+class MyAction
+  include Verbalize::Action
   
   input :a
   
@@ -196,7 +196,7 @@ end
   
 # rspec:
 it 'fails when the input is out of bounds' do
-  result = MyInteractor.call(a: 1000)
+  result = MyAction.call(a: 1000)
   
   expect(result).to be_failed
   expect(result.value).to eq '1000 is greater than 100!'
@@ -205,12 +205,12 @@ end
 
 ### Stubbing Responses
 
-When unit testing, it may be necessary to stub responses of Verbalize interactors. The approach required depends 
-on how the nested interactors are called by the object under test.
+When unit testing, it may be necessary to stub responses of Actions. The approach required depends 
+on how the nested actions are called by the object under test.
  
 #### Stubbing `call`
 
-When an object calls a Verbalize interactor via `call`, you can stub the response with a `Verbalize::Success` or
+When an object calls a `Verbalize::Action` via `call`, you can stub the response with a `Verbalize::Success` or
 `Verbalize::Failure` instance.
 
 Example:
@@ -218,7 +218,7 @@ Example:
 ```ruby
 class Foo
   def do_something
-    result = MyInteractor.call(a: 1)
+    result = MyAction.call(a: 1)
     raise 'I couldn\'t do the thing!' if result.failure?
     
     'baz'
@@ -230,9 +230,9 @@ describe Foo do
   describe '#something' do
     subject { described_class.new(foo: 'bar') }
     
-    it 'does the thing when my interactor succeeds' do
+    it 'does the thing when my action succeeds' do
       successful_result = Verbalize::Success.new(123)
-      allow(MyInteractor).to receive(:call)
+      allow(MyAction).to receive(:call)
                                .with(a: 1)
                                .and_return(successful_result)
       
@@ -241,9 +241,9 @@ describe Foo do
       expect(result).to eq 'baz'
     end
     
-    it 'raises an error when MyInteractor fails' do
+    it 'raises an error when MyAction fails' do
       failed_result = Verbalize::Failure.new('Y U NO!')
-      allow(MyInteractor).to receive(:call)
+      allow(MyAction).to receive(:call)
                                .with(a: 3)
                                .and_return(failed_result)
       
@@ -257,7 +257,7 @@ end
 
 #### Stubbing `call!`
 
-When an object calls a Verbalize interactor via `call!`, you can stub the response for the positive case with the value
+When an object calls a `Verbalize::Action` via `call!`, you can stub the response for the positive case with the value
 you expect to be returned.  When stubbing the negative case, you should instead throw `Verbalize::THROWN_SYMBOL`
 (and the error message, if desired):
 
@@ -270,7 +270,7 @@ describe Foo do
     subject { described_class.new(foo: 'bar') }
     
     it 'does the thing' do
-      allow(MyInteractor).to receive(:call!)
+      allow(MyAction).to receive(:call!)
                                .with(a: 1)
                                .and_return(123)
       
@@ -279,9 +279,9 @@ describe Foo do
       expect(result).to eq 'baz'
     end
     
-    it 'returns an error when MyInteractor fails' do
+    it 'returns an error when MyAction fails' do
       failed_result = Verbalize::Failure.new('Y U NO!')
-      allow(MyInteractor).to receive(:call)
+      allow(MyAction).to receive(:call)
                                .with(a: 3)
                                .and_throw(::Verbalize::THROWN_SYMBOL, 'the failure message, if any')
       
