@@ -22,9 +22,7 @@ module Verbalize
     end
 
     def value
-      warn Kernel.caller.first + ': `Verbalize::Result#value` is deprecated and will be removed in Verbalize 2.0. '\
-        'Use `Verbalize::Failure#error` or `Verbalize::Success#value` instead.'
-      @value
+      raise NotImplementedError, 'Subclasses must override Verbalize::Result#value'
     end
   end
 end
