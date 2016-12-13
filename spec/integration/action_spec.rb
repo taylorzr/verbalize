@@ -62,6 +62,18 @@ describe Verbalize::Action do
         expect(result.value).to eql(:some_method_result)
       end
 
+      it 'using custom method name emits a deprecation warning' do
+        expected_message = Regexp.compile('action_spec.rb:\d+.*use of custom method names for Actions is ' \
+                                          'deprecated.* define `#call` on your Action class instead')
+        expect do
+          Class.new do
+            include Verbalize::Action
+
+            verbalize :some_method_name
+          end
+        end.to output(expected_message).to_stderr
+      end
+
       it 'raises an error when you don’t specify a required argument' do
         some_class = Class.new do
           include Verbalize::Action
@@ -111,7 +123,7 @@ describe Verbalize::Action do
 
         expect(result).not_to be_success
         expect(result).to be_failed
-        expect(result.value).to eql('Are you crazy?!? You can’t divide by zero!')
+        expect(result.failure).to eql('Are you crazy?!? You can’t divide by zero!')
       end
     end
 
@@ -144,7 +156,7 @@ describe Verbalize::Action do
         result = some_class.call
 
         expect(result).to be_failed
-        expect(result.value).to eql('Are you crazy?!? You can’t divide by zero!')
+        expect(result.failure).to eql('Are you crazy?!? You can’t divide by zero!')
       end
 
       it 'raises an error if you specify unrecognized keyword/value arguments' do
@@ -181,7 +193,7 @@ describe Verbalize::Action do
 
       expect(result).not_to   be_success
       expect(result).to       be_failed
-      expect(result.value).to eq :some_failure_message
+      expect(result.failure).to eq :some_failure_message
     end
 
     it 'stubbed failures are captured by parent actions' do
@@ -209,7 +221,7 @@ describe Verbalize::Action do
 
       expect(result).not_to   be_success
       expect(result).to       be_failed
-      expect(result.value).to eq 'foo error'
+      expect(result.failure).to eq 'foo error'
     end
 
     it 'fails up multiple levels' do

@@ -31,6 +31,8 @@ module Verbalize
         **other_keyword_arguments
       )
 
+        deprecate_custom_methods(method_name)
+
         unless other_keyword_arguments.empty?
           raise(
             ArgumentError,
@@ -71,6 +73,13 @@ module Verbalize
       end
 
       private
+
+      def deprecate_custom_methods(method_name)
+        return if method_name == :call
+        warn Kernel.caller[2] + ': use of custom method names for Actions is deprecated and support ' \
+          'for it will be dropped in Verbalize v2.0.  The `verbalize` method will also be removed.' \
+          'Use `input` and define `#call` on your Action class instead.'
+      end
 
       def __verbalized_send(method_name, *args)
         error = catch(:verbalize_error) do

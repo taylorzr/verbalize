@@ -54,7 +54,7 @@ describe Verbalize::Failure do
     it 'is the error message' do
       result = described_class.new('some_error')
 
-      expect(result.value).to eq 'some_error'
+      expect(result.failure).to eq 'some_error'
     end
 
     it 'emits a deprecation warning' do
