@@ -179,8 +179,10 @@ end
 ### Sad Path
 
 When testing negative cases of a `Verbalize::Action`, it is recommended to test using the `call` non-bang 
-class method.  Use of `call!` here is not advised as it will result in an exception being thrown. Set assertions 
-on both the outcome and error value of the result:
+class method which will return a `Verbalize::Failure` on failure.
+
+Use of `call!` here is not advised as it will result in an exception being thrown. Set assertions on both 
+the failure outcome and value:
 
 ```ruby
 class MyAction
@@ -199,7 +201,7 @@ it 'fails when the input is out of bounds' do
   result = MyAction.call(a: 1000)
   
   expect(result).to be_failed
-  expect(result.value).to eq '1000 is greater than 100!'
+  expect(result.failure).to eq '1000 is greater than 100!'
 end
 ```
 
