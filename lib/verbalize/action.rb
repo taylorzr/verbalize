@@ -1,10 +1,7 @@
+require_relative 'build'
 require_relative 'error'
-require_relative 'build_initialize_method'
-require_relative 'build_safe_action_method'
-require_relative 'build_dangerous_action_method'
-require_relative 'build_attribute_readers'
-require_relative 'success'
 require_relative 'failure'
+require_relative 'success'
 
 module Verbalize
   module Action
@@ -19,46 +16,24 @@ module Verbalize
     end
 
     module ClassMethods
-      def input( # rubocop:disable Metrics/MethodLength
-        *required_keywords,
-        optional: [],
-        **other_keyword_arguments
-      )
-        unless other_keyword_arguments.empty?
-          raise(
-            ArgumentError,
-            "Unsupported keyword arguments received: #{other_keyword_arguments.inspect}"
-          )
+      def input(*required_keywords, optional: [], **unsupported_keywords)
+        unless unsupported_keywords.empty?
+          error_message = "Unsupported keywords received: #{unsupported_keywords.inspect}"
+          raise(ArgumentError, error_message)
         end
 
-        optional_keywords = Array(optional)
-
-        class_eval BuildSafeActionMethod.call(
-          required_keywords: required_keywords,
-          optional_keywords: optional_keywords
-        )
-
-        class_eval BuildDangerousActionMethod.call(
-          required_keywords: required_keywords,
-          optional_keywords: optional_keywords
-        )
-
-        class_eval BuildInitializeMethod.call(
-          required_keywords: required_keywords,
-          optional_keywords: optional_keywords
-        )
-
-        class_eval BuildAttributeReaders.call(
-          attributes: required_keywords + optional_keywords
-        )
+        class_eval Build.call(required_keywords, Array(optional))
       end
 
+      # Because call/call! are defined when Action.input is called, they would
+      # not be defined when there is no input. So we pre-define them here, and
+      # if there is any input, they are overwritten
       def call
-        __verbalized_send
+        __proxied_call
       end
 
       def call!
-        __verbalized_send!
+        __proxied_call!
       end
 
       private
@@ -67,7 +42,13 @@ module Verbalize
         new(*args).send(:call)
       end
 
-      def __verbalized_send(*args)
+      # We used __proxied_call/__proxied_call! for 2 reasons:
+      #   1. The declaration of call/call! needs to be explicit so that tools
+      #      like rspec-mocks can verify the actions keywords actually
+      #      exist when stubbing
+      #   2. Because #1, meta-programming a simple interface to these proxied
+      #      methods is much simpler than meta-programming the full methods
+      def __proxied_call(*args)
         error = catch(:verbalize_error) do
           value = perform(*args)
           return Success.new(value)
@@ -76,7 +57,7 @@ module Verbalize
         Failure.new(error)
       end
 
-      def __verbalized_send!(*args)
+      def __proxied_call!(*args)
         perform(*args)
       rescue UncaughtThrowError => uncaught_throw_error
         fail_value = uncaught_throw_error.value
