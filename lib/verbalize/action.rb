@@ -19,20 +19,11 @@ module Verbalize
     end
 
     module ClassMethods
-      def verbalize(*arguments, **keyword_arguments)
-        method_name, *arguments = arguments
-        input(*arguments, method_name: method_name, **keyword_arguments)
-      end
-
       def input( # rubocop:disable Metrics/MethodLength
         *required_keywords,
-        optional:    [],
-        method_name: :call,
+        optional: [],
         **other_keyword_arguments
       )
-
-        deprecate_custom_methods(method_name)
-
         unless other_keyword_arguments.empty?
           raise(
             ArgumentError,
@@ -44,14 +35,12 @@ module Verbalize
 
         class_eval BuildSafeActionMethod.call(
           required_keywords: required_keywords,
-          optional_keywords: optional_keywords,
-          method_name:       method_name
+          optional_keywords: optional_keywords
         )
 
         class_eval BuildDangerousActionMethod.call(
           required_keywords: required_keywords,
-          optional_keywords: optional_keywords,
-          method_name:       method_name
+          optional_keywords: optional_keywords
         )
 
         class_eval BuildInitializeMethod.call(
@@ -65,36 +54,33 @@ module Verbalize
       end
 
       def call
-        __verbalized_send(:call)
+        __verbalized_send
       end
 
       def call!
-        __verbalized_send!(:call)
+        __verbalized_send!
       end
 
       private
 
-      def deprecate_custom_methods(method_name)
-        return if method_name == :call
-        warn Kernel.caller[2] + ': use of custom method names for Actions is deprecated and support ' \
-          'for it will be dropped in Verbalize v2.0.  The `verbalize` method will also be removed.' \
-          'Use `input` and define `#call` on your Action class instead.'
+      def perform(*args)
+        new(*args).send(:call)
       end
 
-      def __verbalized_send(method_name, *args)
+      def __verbalized_send(*args)
         error = catch(:verbalize_error) do
-          value = new(*args).send(method_name)
+          value = perform(*args)
           return Success.new(value)
         end
 
         Failure.new(error)
       end
 
-      def __verbalized_send!(method_name, *args)
-        new(*args).send(method_name)
+      def __verbalized_send!(*args)
+        perform(*args)
       rescue UncaughtThrowError => uncaught_throw_error
         fail_value = uncaught_throw_error.value
-        error = VerbalizeError.new("Unhandled fail! called with: #{fail_value.inspect}.")
+        error = Verbalize::Error.new("Unhandled fail! called with: #{fail_value.inspect}.")
         error.set_backtrace(uncaught_throw_error.backtrace[2..-1])
         raise error
       end

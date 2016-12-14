@@ -1,3 +1,3 @@
 module Verbalize
-  VerbalizeError = Class.new(StandardError)
+  Error = Class.new(StandardError)
 end

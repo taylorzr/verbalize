@@ -5,15 +5,11 @@ module Verbalize
     private
 
     def declaration
-      "def self.#{method_name}!(#{declaration_keyword_arguments})"
+      declare('self.call!')
     end
 
     def body
-      if all_keywords.empty?
-        "  __verbalized_send!(:#{method_name})"
-      else
-        "  __verbalized_send!(:#{method_name}, #{initialize_keywords_and_values})"
-      end
+      verbalized_send_string(bang: true)
     end
   end
 end

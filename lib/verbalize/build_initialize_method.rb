@@ -5,7 +5,7 @@ module Verbalize
     private
 
     def declaration
-      "def initialize(#{declaration_keyword_arguments})"
+      declare('initialize')
     end
 
     def body
