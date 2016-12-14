@@ -9,11 +9,7 @@ module Verbalize
     end
 
     def body
-      if all_keywords.empty?
-        '  __verbalized_send'
-      else
-        "  __verbalized_send(#{initialize_keywords_and_values})"
-      end
+      verbalized_send_string(bang: false)
     end
   end
 end

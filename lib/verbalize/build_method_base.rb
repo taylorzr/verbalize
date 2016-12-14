@@ -56,5 +56,13 @@ module Verbalize
     def initialize_keywords_and_values
       all_keywords.map { |variable| "#{variable}: #{variable}" }.join(', ')
     end
+
+    def verbalized_send_string(bang: false)
+      send_string = '  __verbalized_send'
+      send_string += '!' if bang
+
+      return send_string if all_keywords.empty?
+      send_string + "(#{initialize_keywords_and_values})"
+    end
   end
 end
