@@ -125,10 +125,6 @@ describe Verbalize::Action do
     it 'stubbed failures raise a Verbalize::Error when using `call!`' do
       some_action = Class.new do
         include Verbalize::Action
-
-        def call
-          fail! :some_failure_message
-        end
       end
 
       allow(some_action).to receive(:perform).and_throw(described_class::THROWN_SYMBOL, 'foo error')
