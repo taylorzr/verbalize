@@ -7,10 +7,10 @@ describe Verbalize::Action do
     Class.new do
       include Verbalize::Action
 
-      input :a, :b, :should_fail
+      input :a, :b
 
       def call
-        fail! 'Are you crazy?!? You can’t divide by zero!' if should_fail
+        fail! 'Are you crazy?!? You can’t divide by zero!' if b == 0
         a.divide_by(b)
       end
     end
@@ -18,38 +18,48 @@ describe Verbalize::Action do
 
   describe '.call' do
     it 'returns a Verbalize::Failure instance on fail!' do
-      result = simple_action.call(a: a, b: 10, should_fail: true)
+      result = simple_action.call(a: a, b: 0)
 
-      expect(result).to be_an_instance_of(Verbalize::Failure)
-      expect(result).to be_failure
+      expect(result).to         be_an_instance_of Verbalize::Failure
+      expect(result).to         be_failure
       expect(result.failure).to eq 'Are you crazy?!? You can’t divide by zero!'
     end
 
     it 'returns a Verbalize::Success instance on success' do
-      result = simple_action.call(a: a, b: 10, should_fail: false)
+      result = simple_action.call(a: a, b: 10)
 
-      expect(result).to be_an_instance_of(Verbalize::Success)
-      expect(result).to be_success
+      expect(result).to       be_an_instance_of Verbalize::Success
+      expect(result).to       be_success
       expect(result.value).to eq 20
     end
 
     it 'short circuits the call block on failure' do
-      simple_action.call(a: a, b: 10, should_fail: true)
+      simple_action.call(a: a, b: 0)
 
       expect(a).not_to have_received(:divide_by)
     end
 
-    it 'stubbed failures return a Verbalize::Falure on `call`' do
+    it 'stubbed failures return a Verbalize::Failure' do
       allow(simple_action).to receive(:perform).and_throw(described_class::THROWN_SYMBOL, 'foo error')
 
-      result = simple_action.call(a: a, b: 10, should_fail: false)
+      result = simple_action.call(a: a, b: 10)
 
-      expect(result).not_to   be_success
-      expect(result).to       be_failed
+      expect(result).to         be_an_instance_of Verbalize::Failure
+      expect(result).to         be_failed
       expect(result.failure).to eq 'foo error'
     end
 
-    it 'fails up multiple levels' do
+    it 'stubbed success return a Verbalize::Success' do
+      allow(simple_action).to receive(:perform).and_return(123)
+
+      result = simple_action.call(a: a, b: 10)
+
+      expect(result).to       be_an_instance_of Verbalize::Success
+      expect(result).to       be_success
+      expect(result.value).to eq 123
+    end
+
+    it 'catches failures thrown up multiple levels' do
       some_inner_inner_class = Class.new do
         include Verbalize::Action
 
@@ -62,9 +72,9 @@ describe Verbalize::Action do
         include Verbalize::Action
       end
 
-      some_inner_class.class_exec(some_inner_inner_class) do |interactor_class|
+      some_inner_class.class_exec(some_inner_inner_class) do |action_class|
         define_method(:call) do
-          interactor_class.call!
+          action_class.call!
         end
       end
 
@@ -72,9 +82,9 @@ describe Verbalize::Action do
         include Verbalize::Action
       end
 
-      some_outer_class.class_exec(some_inner_class) do |interactor_class|
+      some_outer_class.class_exec(some_inner_class) do |action_class|
         define_method(:call) do
-          interactor_class.call!
+          action_class.call!
         end
       end
 
@@ -99,16 +109,16 @@ describe Verbalize::Action do
         include Verbalize::Action
       end
 
-      some_outer_class.class_exec(some_inner_class) do |interactor_class|
+      some_outer_class.class_exec(some_inner_class) do |action_class|
         define_method(:call) do
-          interactor_class.call!
+          action_class.call!
         end
       end
 
       result = some_outer_class.call
 
-      expect(result).not_to   be_success
-      expect(result).to       be_failed
+      expect(result).not_to     be_success
+      expect(result).to         be_failed
       expect(result.failure).to eq :some_failure_message
     end
 
@@ -128,6 +138,14 @@ describe Verbalize::Action do
       end.to raise_error(Verbalize::Error, 'Unhandled fail! called with: "foo error".')
     end
 
+    it 'stubbed success returns the resulting value directly' do
+      allow(simple_action).to receive(:perform).and_return(123)
+
+      result = simple_action.call!(a: a, b: 10)
+
+      expect(result).to eq 123
+    end
+
     it 'raises an error with a helpful message \
     if an action fails without being handled' do
       some_class = Class.new do
@@ -145,6 +163,23 @@ describe Verbalize::Action do
   end
 
   describe '.input' do
+    context 'without_arguments' do
+      it 'delegates to the instance call method without arguments' do
+        some_class = Class.new do
+          include Verbalize::Action
+
+          def call
+            :some_behavior
+          end
+        end
+
+        result = some_class.call
+
+        expect(result).to be_success
+        expect(result.value).to eql(:some_behavior)
+      end
+    end
+
     context 'with arguments' do
       it 'allows arguments to be defined and delegates the class method \
       to the instance method' do
@@ -195,42 +230,6 @@ describe Verbalize::Action do
 
         expect(result).to be_success
         expect(result.value).to eql(42)
-      end
-
-      it 'allows you to fail an action and not execute remaining lines' do
-        some_class = Class.new do
-          include Verbalize::Action
-
-          input :a, :b
-
-          def call
-            fail! 'Are you crazy?!? You can’t divide by zero!'
-            a / b
-          end
-        end
-
-        result = some_class.call(a: 1, b: 0)
-
-        expect(result).not_to be_success
-        expect(result).to be_failed
-        expect(result.failure).to eql('Are you crazy?!? You can’t divide by zero!')
-      end
-    end
-
-    context 'without_arguments' do
-      it 'still does something' do
-        some_class = Class.new do
-          include Verbalize::Action
-
-          def call
-            :some_behavior
-          end
-        end
-
-        result = some_class.call
-
-        expect(result).to be_success
-        expect(result.value).to eql(:some_behavior)
       end
 
       it 'raises an error if you specify unrecognized keyword/value arguments' do
