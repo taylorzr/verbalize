@@ -1,9 +1,7 @@
 module Verbalize
   class Build
-    class << self
-      def call(required_keywords = [], optional_keywords = [])
-        new(required_keywords, optional_keywords).call
-      end
+    def self.call(required_keywords = [], optional_keywords = [])
+      new(required_keywords, optional_keywords).call
     end
 
     def initialize(required_keywords, optional_keywords)
