@@ -16,12 +16,7 @@ module Verbalize
     end
 
     module ClassMethods
-      def input(*required_keywords, optional: [], **unsupported_keywords)
-        unless unsupported_keywords.empty?
-          error_message = "Unsupported keywords received: #{unsupported_keywords.inspect}"
-          raise(ArgumentError, error_message)
-        end
-
+      def input(*required_keywords, optional: [])
         class_eval Build.call(required_keywords, Array(optional))
       end
 
