@@ -27,7 +27,7 @@ end
 
 private
 
-attr_reader #{attribute_reader_string}
+attr_reader #{attribute_readers_string}
       CODE
     end
 
@@ -53,7 +53,7 @@ attr_reader #{attribute_reader_string}
       all_keywords.map { |keyword| "@#{keyword} = #{keyword}" }.join("\n  ")
     end
 
-    def attribute_reader_string
+    def attribute_readers_string
       all_keywords.map { |keyword| ":#{keyword}" }.join(', ')
     end
   end
