@@ -30,6 +30,7 @@ module Verbalize
       def call!
         __proxied_call!
       end
+      alias_method :!, :call!
 
       private
 
