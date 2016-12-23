@@ -12,7 +12,7 @@ class << self
   def call(required_argument:)
     __proxied_call(required_argument: required_argument)
   end
-  
+
   def call!(required_argument:)
     __proxied_call!(required_argument: required_argument)
   end
@@ -38,7 +38,7 @@ class << self
   def call(required_argument_1:, required_argument_2:)
     __proxied_call(required_argument_1: required_argument_1, required_argument_2: required_argument_2)
   end
-  
+
   def call!(required_argument_1:, required_argument_2:)
     __proxied_call!(required_argument_1: required_argument_1, required_argument_2: required_argument_2)
   end
@@ -67,7 +67,7 @@ class << self
   def call(optional_argument: nil)
     __proxied_call(optional_argument: optional_argument)
   end
-  
+
   def call!(optional_argument: nil)
     __proxied_call!(optional_argument: optional_argument)
   end
@@ -93,7 +93,7 @@ class << self
   def call(optional_argument_1: nil, optional_argument_2: nil)
     __proxied_call(optional_argument_1: optional_argument_1, optional_argument_2: optional_argument_2)
   end
-  
+
   def call!(optional_argument_1: nil, optional_argument_2: nil)
     __proxied_call!(optional_argument_1: optional_argument_1, optional_argument_2: optional_argument_2)
   end
@@ -122,7 +122,7 @@ class << self
   def call(required_argument:, optional_argument: nil)
     __proxied_call(required_argument: required_argument, optional_argument: optional_argument)
   end
-  
+
   def call!(required_argument:, optional_argument: nil)
     __proxied_call!(required_argument: required_argument, optional_argument: optional_argument)
   end
@@ -152,7 +152,7 @@ class << self
   def call(required_argument_1:, required_argument_2:, optional_argument_1: nil, optional_argument_2: nil)
     __proxied_call(required_argument_1: required_argument_1, required_argument_2: required_argument_2, optional_argument_1: optional_argument_1, optional_argument_2: optional_argument_2)
   end
-  
+
   def call!(required_argument_1:, required_argument_2:, optional_argument_1: nil, optional_argument_2: nil)
     __proxied_call!(required_argument_1: required_argument_1, required_argument_2: required_argument_2, optional_argument_1: optional_argument_1, optional_argument_2: optional_argument_2)
   end

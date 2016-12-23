@@ -17,7 +17,7 @@ class << self
   def call(#{declaration_arguments_string})
     __proxied_call(#{forwarding_arguments_string})
   end
-  
+
   def call!(#{declaration_arguments_string})
     __proxied_call!(#{forwarding_arguments_string})
   end
