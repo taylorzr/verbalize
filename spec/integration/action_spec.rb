@@ -158,6 +158,36 @@ describe Verbalize::Action do
     end
   end
 
+  describe '.!' do
+    it 'detects missing named parameters when stubbed' do
+      allow(simple_action).to receive(:!)
+      expect { simple_action.! }.to raise_error ArgumentError, 'Missing required keyword arguments: a, b'
+    end
+
+    it 'works when there are no input parameters' do
+      action_class = Class.new do
+        include Verbalize::Action
+        def call
+          2
+        end
+      end
+
+      value = action_class.!
+      expect(value).to eq 2
+    end
+
+    it 'works with input parameters' do
+      value = simple_action.!(a: a, b: 5)
+      expect(value).to eq 20
+    end
+
+    it 'throws when a failure occurs' do
+      expect do
+        simple_action.!(a: a, b: 0)
+      end.to throw_symbol(Verbalize::THROWN_SYMBOL, 'Are you crazy?!? You can’t divide by zero!')
+    end
+  end
+
   describe '.input' do
     context 'without_arguments' do
       it 'delegates to the instance call method without arguments' do

@@ -10,13 +10,18 @@ module Verbalize
     end
 
     def call
+      # We have to re-alias `!` to `call!` here, otherwise it will be pointing
+      # to the original `call!` method
       <<-CODE
-def self.call(#{declaration_arguments_string})
-  __proxied_call(#{forwarding_arguments_string})
-end
+class << self
+  def call(#{declaration_arguments_string})
+    __proxied_call(#{forwarding_arguments_string})
+  end
 
-def self.call!(#{declaration_arguments_string})
-  __proxied_call!(#{forwarding_arguments_string})
+  def call!(#{declaration_arguments_string})
+    __proxied_call!(#{forwarding_arguments_string})
+  end
+  alias_method :!, :call!
 end
 
 def initialize(#{declaration_arguments_string})

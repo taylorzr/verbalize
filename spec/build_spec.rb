@@ -8,12 +8,15 @@ describe Verbalize::Build do
 
       expect(result).to eql \
         <<-CODE
-def self.call(required_argument:)
-  __proxied_call(required_argument: required_argument)
-end
+class << self
+  def call(required_argument:)
+    __proxied_call(required_argument: required_argument)
+  end
 
-def self.call!(required_argument:)
-  __proxied_call!(required_argument: required_argument)
+  def call!(required_argument:)
+    __proxied_call!(required_argument: required_argument)
+  end
+  alias_method :!, :call!
 end
 
 def initialize(required_argument:)
@@ -31,12 +34,15 @@ attr_reader :required_argument
 
       expect(result).to eql \
         <<-CODE
-def self.call(required_argument_1:, required_argument_2:)
-  __proxied_call(required_argument_1: required_argument_1, required_argument_2: required_argument_2)
-end
+class << self
+  def call(required_argument_1:, required_argument_2:)
+    __proxied_call(required_argument_1: required_argument_1, required_argument_2: required_argument_2)
+  end
 
-def self.call!(required_argument_1:, required_argument_2:)
-  __proxied_call!(required_argument_1: required_argument_1, required_argument_2: required_argument_2)
+  def call!(required_argument_1:, required_argument_2:)
+    __proxied_call!(required_argument_1: required_argument_1, required_argument_2: required_argument_2)
+  end
+  alias_method :!, :call!
 end
 
 def initialize(required_argument_1:, required_argument_2:)
@@ -57,12 +63,15 @@ attr_reader :required_argument_1, :required_argument_2
 
       expect(result).to eql \
         <<-CODE
-def self.call(optional_argument: nil)
-  __proxied_call(optional_argument: optional_argument)
-end
+class << self
+  def call(optional_argument: nil)
+    __proxied_call(optional_argument: optional_argument)
+  end
 
-def self.call!(optional_argument: nil)
-  __proxied_call!(optional_argument: optional_argument)
+  def call!(optional_argument: nil)
+    __proxied_call!(optional_argument: optional_argument)
+  end
+  alias_method :!, :call!
 end
 
 def initialize(optional_argument: nil)
@@ -80,12 +89,15 @@ attr_reader :optional_argument
 
       expect(result).to eql \
         <<-CODE
-def self.call(optional_argument_1: nil, optional_argument_2: nil)
-  __proxied_call(optional_argument_1: optional_argument_1, optional_argument_2: optional_argument_2)
-end
+class << self
+  def call(optional_argument_1: nil, optional_argument_2: nil)
+    __proxied_call(optional_argument_1: optional_argument_1, optional_argument_2: optional_argument_2)
+  end
 
-def self.call!(optional_argument_1: nil, optional_argument_2: nil)
-  __proxied_call!(optional_argument_1: optional_argument_1, optional_argument_2: optional_argument_2)
+  def call!(optional_argument_1: nil, optional_argument_2: nil)
+    __proxied_call!(optional_argument_1: optional_argument_1, optional_argument_2: optional_argument_2)
+  end
+  alias_method :!, :call!
 end
 
 def initialize(optional_argument_1: nil, optional_argument_2: nil)
@@ -106,12 +118,15 @@ attr_reader :optional_argument_1, :optional_argument_2
 
       expect(result).to eql \
         <<-CODE
-def self.call(required_argument:, optional_argument: nil)
-  __proxied_call(required_argument: required_argument, optional_argument: optional_argument)
-end
+class << self
+  def call(required_argument:, optional_argument: nil)
+    __proxied_call(required_argument: required_argument, optional_argument: optional_argument)
+  end
 
-def self.call!(required_argument:, optional_argument: nil)
-  __proxied_call!(required_argument: required_argument, optional_argument: optional_argument)
+  def call!(required_argument:, optional_argument: nil)
+    __proxied_call!(required_argument: required_argument, optional_argument: optional_argument)
+  end
+  alias_method :!, :call!
 end
 
 def initialize(required_argument:, optional_argument: nil)
@@ -133,12 +148,15 @@ attr_reader :required_argument, :optional_argument
 
       expect(result).to eql \
         <<-CODE
-def self.call(required_argument_1:, required_argument_2:, optional_argument_1: nil, optional_argument_2: nil)
-  __proxied_call(required_argument_1: required_argument_1, required_argument_2: required_argument_2, optional_argument_1: optional_argument_1, optional_argument_2: optional_argument_2)
-end
+class << self
+  def call(required_argument_1:, required_argument_2:, optional_argument_1: nil, optional_argument_2: nil)
+    __proxied_call(required_argument_1: required_argument_1, required_argument_2: required_argument_2, optional_argument_1: optional_argument_1, optional_argument_2: optional_argument_2)
+  end
 
-def self.call!(required_argument_1:, required_argument_2:, optional_argument_1: nil, optional_argument_2: nil)
-  __proxied_call!(required_argument_1: required_argument_1, required_argument_2: required_argument_2, optional_argument_1: optional_argument_1, optional_argument_2: optional_argument_2)
+  def call!(required_argument_1:, required_argument_2:, optional_argument_1: nil, optional_argument_2: nil)
+    __proxied_call!(required_argument_1: required_argument_1, required_argument_2: required_argument_2, optional_argument_1: optional_argument_1, optional_argument_2: optional_argument_2)
+  end
+  alias_method :!, :call!
 end
 
 def initialize(required_argument_1:, required_argument_2:, optional_argument_1: nil, optional_argument_2: nil)
