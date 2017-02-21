@@ -17,15 +17,15 @@ module Verbalize
 
     module ClassMethods
       def input(*required_keywords, optional: [])
-        # treat `input` as an accessor if nothing is passed in.
-        return @inputs || [] if required_keywords.empty? && optional.empty?
-
         @inputs = required_keywords
         @optional_inputs = optional
 
         class_eval Build.call(required_keywords, Array(optional))
       end
-      alias_method :inputs, :input
+
+      def inputs
+        @inputs || []
+      end
 
       def optional_inputs
         @optional_inputs || []

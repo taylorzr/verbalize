@@ -188,7 +188,7 @@ describe Verbalize::Action do
     end
   end
 
-  describe '.input' do
+  describe '.input/.inputs' do
     context 'without_arguments' do
       let(:some_class) do
         Class.new do
@@ -207,7 +207,7 @@ describe Verbalize::Action do
         expect(result.value).to eql(:some_behavior)
       end
 
-      it 'returns an empty array' do
+      it '.inputs returns an empty array' do
         expect(some_class.inputs).to eq []
       end
     end
@@ -237,7 +237,7 @@ describe Verbalize::Action do
         expect { some_class.call(a: 42) }.to raise_error(ArgumentError)
       end
 
-      it 'returns all required arguments' do
+      it '.inputs returns all required inputs' do
         expect(some_class.inputs).to contain_exactly(:a, :b)
       end
     end
@@ -266,7 +266,7 @@ describe Verbalize::Action do
         expect(result.value).to eql(42)
       end
 
-      it 'only lists required inputs' do
+      it '.inputs only returns required inputs' do
         expect(some_class.inputs).to contain_exactly(:a)
       end
     end
