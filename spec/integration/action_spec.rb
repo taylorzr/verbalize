@@ -410,7 +410,7 @@ describe Verbalize::Action do
         end
       end
 
-      it 'returns the required inputs' do
+      it 'returns the inputs' do
         expect(some_class.inputs).to contain_exactly(:a, :b)
       end
     end
@@ -423,7 +423,7 @@ describe Verbalize::Action do
         end
       end
 
-      it 'returns the required inputs' do
+      it 'returns the inputs' do
         expect(some_class.inputs).to contain_exactly(:a, :b, :c, :d)
       end
     end
