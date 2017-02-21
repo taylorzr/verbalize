@@ -91,8 +91,9 @@ class Add
   end
 end
 
-Add.inputs # [:a, :b]
+Add.required_inputs # [:a, :b]
 Add.optional_inputs # [:c, :d]
+Add.inputs # [:a, :b, :c, :d]
 ```
 
 ## Comparison/Benchmark
