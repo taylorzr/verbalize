@@ -208,7 +208,7 @@ describe Verbalize::Action do
       end
 
       it 'returns an empty array' do
-        expect(some_class.input).to eq []
+        expect(some_class.inputs).to eq []
       end
     end
 
@@ -238,7 +238,7 @@ describe Verbalize::Action do
       end
 
       it 'returns all required arguments' do
-        expect(some_class.input).to contain_exactly(:a, :b)
+        expect(some_class.inputs).to contain_exactly(:a, :b)
       end
     end
 
@@ -267,7 +267,7 @@ describe Verbalize::Action do
       end
 
       it 'only lists required inputs' do
-        expect(some_class.input).to contain_exactly(:a)
+        expect(some_class.inputs).to contain_exactly(:a)
       end
     end
 
@@ -281,4 +281,6 @@ describe Verbalize::Action do
       end.to raise_error(ArgumentError)
     end
   end
+
+  describe '.optional_inputs'
 end

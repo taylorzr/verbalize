@@ -25,6 +25,7 @@ module Verbalize
 
         class_eval Build.call(required_keywords, Array(optional))
       end
+      alias_method :inputs, :input
 
       def optional_inputs
         @optional_inputs || []
