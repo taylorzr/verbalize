@@ -212,7 +212,7 @@ describe Verbalize::Action do
       end
     end
 
-    context 'with required argumentsarguments' do
+    context 'with required arguments' do
       let(:some_class) do
         Class.new do
           include Verbalize::Action
