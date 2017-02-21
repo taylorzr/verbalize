@@ -17,7 +17,22 @@ module Verbalize
 
     module ClassMethods
       def input(*required_keywords, optional: [])
+        @required_inputs = required_keywords
+        @optional_inputs = optional
+
         class_eval Build.call(required_keywords, Array(optional))
+      end
+
+      def required_inputs
+        @required_inputs || []
+      end
+
+      def optional_inputs
+        @optional_inputs || []
+      end
+
+      def inputs
+        required_inputs + optional_inputs
       end
 
       # Because call/call! are defined when Action.input is called, they would

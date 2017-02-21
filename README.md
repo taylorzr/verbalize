@@ -69,6 +69,33 @@ result = Divide.call(a: 1, b: 0) # => [:error, 'You can’t divide by 0']
 result.failed? # => true
 ```
 
+### Reflection
+```ruby
+class Add
+  include Verbalize::Action
+
+  input :a, :b, optional: [:c, :d]
+
+  def call
+    a + b + c + d
+  end
+
+  private
+
+  def c
+    @c ||= 0
+  end
+
+  def d
+    @d ||= 0
+  end
+end
+
+Add.required_inputs # [:a, :b]
+Add.optional_inputs # [:c, :d]
+Add.inputs # [:a, :b, :c, :d]
+```
+
 ## Comparison/Benchmark
 ```ruby
 require 'verbalize'
@@ -155,15 +182,15 @@ Comparison:
 ### Happy Path
 
 When testing positive cases of a `Verbalize::Action`, it is recommended to test using the `call!` class method and
-assert on the result.  This implicitly ensures a successful result, and your tests will fail with a bang! if 
+assert on the result.  This implicitly ensures a successful result, and your tests will fail with a bang! if
 something goes wrong:
 
 ```ruby
 class MyAction
   include Verbalize::Action
-  
+
   input :a
-  
+
   def call
     fail!('#{a} is greater than than 100!') if a >= 100
     a + 1
@@ -178,28 +205,28 @@ end
 
 ### Sad Path
 
-When testing negative cases of a `Verbalize::Action`, it is recommended to test using the `call` non-bang 
+When testing negative cases of a `Verbalize::Action`, it is recommended to test using the `call` non-bang
 class method which will return a `Verbalize::Failure` on failure.
 
-Use of `call!` here is not advised as it will result in an exception being thrown. Set assertions on both 
+Use of `call!` here is not advised as it will result in an exception being thrown. Set assertions on both
 the failure outcome and value:
 
 ```ruby
 class MyAction
   include Verbalize::Action
-  
+
   input :a
-  
+
   def call
     fail!('#{a} is greater than 100!') if a >= 100
     a + 1
   end
 end
-  
+
 # rspec:
 it 'fails when the input is out of bounds' do
   result = MyAction.call(a: 1000)
-  
+
   expect(result).to be_failed
   expect(result.failure).to eq '1000 is greater than 100!'
 end
@@ -208,11 +235,11 @@ end
 ### Stubbing Responses
 
 When unit testing, it may be necessary to stub the responses of Verbalize actions.  To correctly stub responses,
-you should __always__ stub the `MyAction.perform` class method on the action class being stubbed per the 
+you should __always__ stub the `MyAction.perform` class method on the action class being stubbed per the
 instructions below.  __Never__ stub the `call` or `call!` methods directly.
 
 Stubbing `.perform` will enable `Verbalize` to wrap results correctly for references to either `call` or `call!`.
- 
+
 #### Stubbing Successful Responses
 
 To simulate a successful response of the `Verbalize::Action` being stubbed, you should stub the `MyAction.perform`
@@ -225,7 +252,7 @@ class Foo
   def self.multiply_by(multiple)
     result = MyAction.call(a: 1)
     raise "I couldn't do the thing!" if result.failure?
-    
+
     result.value * multiple
   end
 end
@@ -238,9 +265,9 @@ describe Foo do
       allow(MyAction).to receive(:perform)
         .with(a: 1)
         .and_return(123)
-      
+
       result = described_class.multiply_by(100)
-      
+
       expect(result).to eq 12300
     end
   end
@@ -266,7 +293,7 @@ describe Foo do
       allow(MyAction).to receive(:perform)
         .with(a: 1)
         .and_throw(::Verbalize::THROWN_SYMBOL, 'Y U NO!')
-      
+
       expect {
         described_class.multiply_by(100)
       }.to raise_error "I couldn't do the thing!"
@@ -305,4 +332,3 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/taylor
 ## License
 
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-

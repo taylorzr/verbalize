@@ -190,15 +190,17 @@ describe Verbalize::Action do
 
   describe '.input' do
     context 'without_arguments' do
-      it 'delegates to the instance call method without arguments' do
-        some_class = Class.new do
+      let(:some_class) do
+        Class.new do
           include Verbalize::Action
 
           def call
             :some_behavior
           end
         end
+      end
 
+      it 'delegates to the instance call method without arguments' do
         result = some_class.call
 
         expect(result).to be_success
@@ -206,10 +208,9 @@ describe Verbalize::Action do
       end
     end
 
-    context 'with arguments' do
-      it 'allows arguments to be defined and delegates the class method \
-      to the instance method' do
-        some_class = Class.new do
+    context 'with required arguments' do
+      let(:some_class) do
+        Class.new do
           include Verbalize::Action
 
           input :a, :b
@@ -218,7 +219,10 @@ describe Verbalize::Action do
             a + b
           end
         end
+      end
 
+      it 'allows arguments to be defined and delegates the class method \
+      to the instance method' do
         result = some_class.call(a: 40, b: 2)
 
         expect(result).to be_success
@@ -226,19 +230,13 @@ describe Verbalize::Action do
       end
 
       it 'raises an error when you don’t specify a required argument' do
-        some_class = Class.new do
-          include Verbalize::Action
-
-          input :a, :b
-
-          def call; end
-        end
-
         expect { some_class.call(a: 42) }.to raise_error(ArgumentError)
       end
+    end
 
-      it 'allows you to specify an optional argument' do
-        some_class = Class.new do
+    context 'with an optional argument' do
+      let(:some_class) do
+        Class.new do
           include Verbalize::Action
 
           input :a, optional: :b
@@ -251,21 +249,156 @@ describe Verbalize::Action do
             @b ||= 2
           end
         end
+      end
 
+      it 'allows you to specify an optional argument' do
         result = some_class.call(a: 40)
 
         expect(result).to be_success
         expect(result.value).to eql(42)
       end
+    end
 
-      it 'raises an error if you specify unrecognized keyword/value arguments' do
-        expect do
-          Class.new do
-            include Verbalize::Action
+    it 'raises an error if you specify unrecognized keyword/value arguments' do
+      expect do
+        Class.new do
+          include Verbalize::Action
 
-            input improper: :usage
-          end
-        end.to raise_error(ArgumentError)
+          input improper: :usage
+        end
+      end.to raise_error(ArgumentError)
+    end
+  end
+
+  describe '.required_inputs' do
+    context 'with no inputs' do
+      let(:some_class) do
+        Class.new do
+          include Verbalize::Action
+        end
+      end
+
+      it 'returns an empty array' do
+        expect(some_class.required_inputs).to eq []
+      end
+    end
+
+    context 'with no required inputs' do
+      let(:some_class) do
+        Class.new do
+          include Verbalize::Action
+          input optional: [:a, :b]
+        end
+      end
+
+      it 'returns an empty array' do
+        expect(some_class.required_inputs).to eq []
+      end
+    end
+
+    context 'with required inputs' do
+      let(:some_class) do
+        Class.new do
+          include Verbalize::Action
+          input :a, :b, optional: [:c, :d]
+        end
+      end
+
+      it 'returns the required inputs' do
+        expect(some_class.required_inputs).to contain_exactly(:a, :b)
+      end
+    end
+  end
+
+  describe '.optional_inputs' do
+    context 'with no inputs' do
+      let(:some_class) do
+        Class.new do
+          include Verbalize::Action
+        end
+      end
+
+      it 'returns an empty array' do
+        expect(some_class.optional_inputs).to eq []
+      end
+    end
+
+    context 'with no optional inputs' do
+      let(:some_class) do
+        Class.new do
+          include Verbalize::Action
+          input :a, :b
+        end
+      end
+
+      it 'returns an empty array' do
+        expect(some_class.optional_inputs).to eq []
+      end
+    end
+
+    context 'with optional inputs' do
+      let(:some_class) do
+        Class.new do
+          include Verbalize::Action
+          input :a, optional: [:b, :c]
+        end
+      end
+
+      it 'returns the optional inputs' do
+        expect(some_class.optional_inputs).to contain_exactly(:b, :c)
+      end
+    end
+  end
+
+  describe '.inputs' do
+    context 'with no inputs' do
+      let(:some_class) do
+        Class.new do
+          include Verbalize::Action
+        end
+      end
+
+      it 'returns an empty array' do
+        expect(some_class.inputs).to eq []
+      end
+    end
+
+    context 'with optional inputs' do
+      let(:some_class) do
+        Class.new do
+          include Verbalize::Action
+          input optional: [:a, :b]
+        end
+      end
+
+      it 'returns an empty array' do
+        expect(some_class.inputs).to contain_exactly(:a, :b)
+      end
+    end
+
+    context 'with required inputs' do
+      let(:some_class) do
+        Class.new do
+          include Verbalize::Action
+          input :a, :b
+        end
+      end
+
+      it 'returns an empty array' do
+        expect(some_class.inputs).to contain_exactly(:a, :b)
+      end
+    end
+
+    context 'with required and optional inputs' do
+      let(:some_class) do
+        Class.new do
+          include Verbalize::Action
+          input :a, :b, optional: [:c, :d]
+        end
+      end
+
+      it 'returns the required inputs' do
+        expect(some_class.inputs).to contain_exactly(:a, :b, :c, :d)
       end
     end
   end
