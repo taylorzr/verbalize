@@ -18,9 +18,10 @@ module Verbalize
     module ClassMethods
       def input(*required_keywords, optional: [])
         @required_inputs = required_keywords
+        optional = Array(optional)
         @optional_inputs = optional
 
-        class_eval Build.call(required_keywords, Array(optional))
+        class_eval Build.call(required_keywords, optional)
       end
 
       def required_inputs

@@ -336,6 +336,19 @@ describe Verbalize::Action do
       end
     end
 
+    context 'with 1 optional input' do
+      let(:some_class) do
+        Class.new do
+          include Verbalize::Action
+          input :a, optional: :b
+        end
+      end
+
+      it 'returns the optional inputs' do
+        expect(some_class.optional_inputs).to contain_exactly(:b)
+      end
+    end
+
     context 'with optional inputs' do
       let(:some_class) do
         Class.new do
@@ -389,6 +402,19 @@ describe Verbalize::Action do
       end
     end
 
+    context 'with one required and one optional input' do
+      let(:some_class) do
+        Class.new do
+          include Verbalize::Action
+          input :a, optional: :b
+        end
+      end
+
+      it 'returns the inputs' do
+        expect(some_class.inputs).to contain_exactly(:a, :b)
+      end
+    end
+
     context 'with required and optional inputs' do
       let(:some_class) do
         Class.new do
@@ -397,7 +423,7 @@ describe Verbalize::Action do
         end
       end
 
-      it 'returns the required inputs' do
+      it 'returns the inputs' do
         expect(some_class.inputs).to contain_exactly(:a, :b, :c, :d)
       end
     end
