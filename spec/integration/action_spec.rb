@@ -282,5 +282,43 @@ describe Verbalize::Action do
     end
   end
 
-  describe '.optional_inputs'
+  describe '.optional_inputs' do
+    context 'with no inputs' do
+      let(:some_class) do
+        Class.new do
+          include Verbalize::Action
+        end
+      end
+
+      it 'returns an empty array' do
+        expect(some_class.optional_inputs).to eq []
+      end
+    end
+  end
+
+  context 'with no optional inputs' do
+    let(:some_class) do
+      Class.new do
+        include Verbalize::Action
+        input :a, :b
+      end
+    end
+
+    it 'returns an empty array' do
+      expect(some_class.optional_inputs).to eq []
+    end
+  end
+
+  context 'with optional inputs' do
+    let(:some_class) do
+      Class.new do
+        include Verbalize::Action
+        input :a, optional: [:b, :c]
+      end
+    end
+
+    it 'returns the optional inputs' do
+      expect(some_class.optional_inputs).to contain_exactly(:b, :c)
+    end
+  end
 end
