@@ -39,11 +39,11 @@ module Verbalize
       # Because call/call! are defined when Action.input is called, they would
       # not be defined when there is no input. So we pre-define them here, and
       # if there is any input, they are overwritten
-      def call
+      def call(*_args)
         __proxied_call
       end
 
-      def call!
+      def call!(*_args)
         __proxied_call!
       end
       alias_method :!, :call!
