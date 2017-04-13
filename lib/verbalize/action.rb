@@ -16,14 +16,6 @@ module Verbalize
     end
 
     module ClassMethods
-      def input(*required_keywords, optional: [])
-        @required_inputs = required_keywords
-        optional = Array(optional)
-        @optional_inputs = optional
-
-        class_eval Build.call(required_keywords, optional)
-      end
-
       def required_inputs
         @required_inputs || []
       end
@@ -49,6 +41,14 @@ module Verbalize
       alias_method :!, :call!
 
       private
+
+      def input(*required_keywords, optional: [])
+        @required_inputs = required_keywords
+        optional = Array(optional)
+        @optional_inputs = optional
+
+        class_eval Build.call(required_keywords, optional)
+      end
 
       def perform(*args)
         new(*args).send(:call)
