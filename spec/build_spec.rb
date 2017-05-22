@@ -84,7 +84,7 @@ attr_reader :optional_argument
       CODE
     end
 
-    it 'builds an action with multiple required arguments' do
+    it 'builds an action with multiple optional arguments' do
       result = described_class.call([], [:optional_argument_1, :optional_argument_2])
 
       expect(result).to eql \
@@ -108,6 +108,34 @@ end
 private
 
 attr_reader :optional_argument_1, :optional_argument_2
+      CODE
+    end
+
+    it 'builds an action with multiple optional arguments with defaults' do
+      result = described_class.call([], [:opt1, :opt2, default: :value])
+
+      expect(result).to eql \
+        <<-CODE
+class << self
+  def call(opt1: nil, opt2: nil, default: self.defaults[:default].call)
+    __proxied_call(opt1: opt1, opt2: opt2, default: default)
+  end
+
+  def call!(opt1: nil, opt2: nil, default: self.defaults[:default].call)
+    __proxied_call!(opt1: opt1, opt2: opt2, default: default)
+  end
+  alias_method :!, :call!
+end
+
+def initialize(opt1: nil, opt2: nil, default: self.defaults[:default].call)
+  @opt1 = opt1
+  @opt2 = opt2
+  @default = default
+end
+
+private
+
+attr_reader :opt1, :opt2, :default
       CODE
     end
   end

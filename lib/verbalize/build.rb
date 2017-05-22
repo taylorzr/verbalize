@@ -5,8 +5,9 @@ module Verbalize
     end
 
     def initialize(required_keywords, optional_keywords)
-      @required_keywords = required_keywords
-      @optional_keywords = optional_keywords
+      @required_keywords  = required_keywords
+      @optional_keywords  = optional_keywords.reject { |key| key.is_a?(Hash) }
+      @defaulted_keywords = optional_keywords.select { |key| key.is_a?(Hash) }.reduce(&:merge) || {}
     end
 
     def call
@@ -34,18 +35,19 @@ attr_reader #{attribute_readers_string}
       CODE
     end
 
-    attr_reader :required_keywords, :optional_keywords
+    attr_reader :required_keywords, :optional_keywords, :defaulted_keywords
 
     private
 
     def all_keywords
-      required_keywords + optional_keywords
+      required_keywords + optional_keywords + defaulted_keywords.keys
     end
 
     def declaration_arguments_string
-      required_segments = required_keywords.map { |keyword| "#{keyword}:" }
-      optional_segments = optional_keywords.map { |keyword| "#{keyword}: nil" }
-      (required_segments + optional_segments).join(', ')
+      required_segments  = required_keywords.map { |keyword| "#{keyword}:" }
+      optional_segments  = optional_keywords.map { |keyword| "#{keyword}: nil" }
+      defaulted_segments = defaulted_keywords.keys.map { |keyword| "#{keyword}: self.defaults[:#{keyword}].call"}
+      (required_segments + optional_segments + defaulted_segments).join(', ')
     end
 
     def forwarding_arguments_string
