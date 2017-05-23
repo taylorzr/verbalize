@@ -450,11 +450,11 @@ describe Verbalize::Action do
     end
 
     it 'renders default values if no value is passed in' do
-      expect(complex_action.call!).to eq({
+      expect(complex_action.call!).to eq(
         no_default:     nil,
         default_const:  3,
         default_method: Date.today
-      })
+      )
     end
 
     context 'with multiple classes using overriding defaults' do

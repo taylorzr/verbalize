@@ -46,7 +46,7 @@ attr_reader #{attribute_readers_string}
     def declaration_arguments_string
       required_segments  = required_keywords.map { |keyword| "#{keyword}:" }
       optional_segments  = optional_keywords.map { |keyword| "#{keyword}: nil" }
-      defaulted_segments = defaulted_keywords.keys.map { |keyword| "#{keyword}: self.defaults[:#{keyword}].call"}
+      defaulted_segments = defaulted_keywords.keys.map { |keyword| "#{keyword}: self.defaults[:#{keyword}].call" }
       (required_segments + optional_segments + defaulted_segments).join(', ')
     end
 

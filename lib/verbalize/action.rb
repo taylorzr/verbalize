@@ -55,9 +55,9 @@ module Verbalize
         optional = Array(optional)
         @optional_inputs = optional.reject { |kw| kw.is_a?(Hash) }
         @defaults = optional.select { |kw| kw.is_a?(Hash) }.reduce(&:merge)
-        @defaults = (@defaults || {}).
-          map { |k, v| [k, v.respond_to?(:call) ? v : lambda { v }] }.
-          to_h
+        @defaults = (@defaults || {})
+                    .map { |k, v| [k, v.respond_to?(:call) ? v : -> { v }] }
+                    .to_h
 
         class_eval Build.call(required_keywords, optional)
       end
