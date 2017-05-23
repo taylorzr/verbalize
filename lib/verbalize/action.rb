@@ -59,7 +59,7 @@ module Verbalize
                     .map { |k, v| [k, v.respond_to?(:call) ? v : -> { v }] }
                     .to_h
 
-        class_eval Build.call(required_keywords, optional)
+        class_eval Build.call(required_inputs, optional_inputs, default_inputs)
       end
 
       def perform(*args)
