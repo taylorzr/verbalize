@@ -18,5 +18,13 @@ module Verbalize
         'without also explicitly handling potential errors.  Please use `Verbalize::Action#call!` to return a value ' \
         'directly on successful execution of an action, or handle the error case explicitly if using `#call`.'
     end
+
+    def and_then
+      self
+    end
+
+    def unwrap!
+      throw(THROWN_SYMBOL, failure)
+    end
   end
 end

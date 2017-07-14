@@ -7,5 +7,13 @@ module Verbalize
     end
 
     attr_reader :value
+
+    def and_then
+      yield value
+    end
+
+    def unwrap!
+      value
+    end
   end
 end
