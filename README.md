@@ -59,24 +59,26 @@ Add.call(a: 660, b: 6) # => [:ok, 666]
 # You can define defaults via key/value pairs, as so:
 class Add
   include Verbalize::Action
+  # note that these values are evaluated at load-time as they are not wrapped
+  # in lambdas.
   input optional: [a: 35, b: 7]
   def call; a + b; end
 end
 
 # default values can be lazily loaded by passing in a lambda, e.g.:
 
-# assuming today is January 1st
 class Tomorrow
   include Verbalize::Action
-  input optional: [as_of: -> { Date.today }]
+  input optional: [as_of: -> { Time.now }]
   def call
     as_of + 1
   end
 end
 
-sleep(60 * 60 * 24 * 3) # sleep 3 days, until January 4th
-
-Tomorrow.call! # => January 5th
+start_time = Tomorrow.call!
+sleep(1)
+end_time = Tomorrow.call!
+end_time - start_time # ~1s; the default is executed each call.
 ```
 
 

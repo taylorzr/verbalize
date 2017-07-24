@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Added
 - changelog started
+- You can now specify default values for optional inputs in the `input` call.
+  Use a regular value to load it once, at load-time, and a lambda to lazily load
+  the value each time the action is called.
 ### Changed
 - privatize Action.input. Now that we have Action.inputs, we want to avoid calling Action.input (no s) outside of the action itself
 
@@ -76,4 +79,3 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## 0.1.0 - 2016-08-07
 - initial release
-
