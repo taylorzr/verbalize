@@ -1,12 +1,13 @@
 module Verbalize
   class Build
-    def self.call(required_keywords = [], optional_keywords = [])
-      new(required_keywords, optional_keywords).call
+    def self.call(required_keywords = [], optional_keywords = [], default_keywords = [])
+      new(required_keywords, optional_keywords, default_keywords).call
     end
 
-    def initialize(required_keywords, optional_keywords)
+    def initialize(required_keywords, optional_keywords, default_keywords)
       @required_keywords = required_keywords
       @optional_keywords = optional_keywords
+      @default_keywords  = default_keywords
     end
 
     def call
@@ -34,18 +35,19 @@ attr_reader #{attribute_readers_string}
       CODE
     end
 
-    attr_reader :required_keywords, :optional_keywords
+    attr_reader :required_keywords, :optional_keywords, :default_keywords
 
     private
 
     def all_keywords
-      required_keywords + optional_keywords
+      required_keywords + optional_keywords + default_keywords
     end
 
     def declaration_arguments_string
-      required_segments = required_keywords.map { |keyword| "#{keyword}:" }
-      optional_segments = optional_keywords.map { |keyword| "#{keyword}: nil" }
-      (required_segments + optional_segments).join(', ')
+      required_segments  = required_keywords.map { |keyword| "#{keyword}:" }
+      optional_segments  = optional_keywords.map { |keyword| "#{keyword}: nil" }
+      default_segments   = default_keywords.map  { |keyword| "#{keyword}: self.defaults[:#{keyword}].call" }
+      (required_segments + optional_segments + default_segments).join(', ')
     end
 
     def forwarding_arguments_string

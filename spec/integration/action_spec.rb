@@ -184,7 +184,7 @@ describe Verbalize::Action do
     it 'throws when a failure occurs' do
       expect do
         simple_action.!(a: a, b: 0)
-      end.to throw_symbol(Verbalize::THROWN_SYMBOL, 'Are you crazy?!? You can’t divide by zero!')
+      end.to throw_symbol(described_class::THROWN_SYMBOL, 'Are you crazy?!? You can’t divide by zero!')
     end
   end
 
@@ -425,6 +425,53 @@ describe Verbalize::Action do
 
       it 'returns the inputs' do
         expect(some_class.inputs).to contain_exactly(:a, :b, :c, :d)
+      end
+    end
+  end
+
+  describe 'optional values' do
+    let(:complex_action) do
+      Class.new do
+        include Verbalize::Action
+        input optional: [:no_default, default_const: 3, default_method: ->() { Date.today }]
+
+        def call
+          {
+            no_default:     no_default,
+            default_const:  default_const,
+            default_method: default_method
+          }
+        end
+      end
+    end
+
+    it 'wraps value consts in methods' do
+      expect(complex_action.defaults[:default_const]).to respond_to(:call)
+    end
+
+    it 'renders default values if no value is passed in' do
+      expect(complex_action.call!).to eq(
+        no_default:     nil,
+        default_const:  3,
+        default_method: Date.today
+      )
+    end
+
+    context 'with multiple classes using overriding defaults' do
+      let(:other_action) do
+        Class.new do
+          include Verbalize::Action
+          input optional: [:no_default, default_const: 25]
+
+          def call
+            default_const
+          end
+        end
+      end
+
+      it 'retains the correct defaults', :aggregate_failures do
+        expect(complex_action.call![:default_const]).to eq 3
+        expect(other_action.call!).to eq 25
       end
     end
   end

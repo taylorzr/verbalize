@@ -24,8 +24,16 @@ module Verbalize
         @optional_inputs || []
       end
 
+      def default_inputs
+        (@defaults || {}).keys
+      end
+
       def inputs
-        required_inputs + optional_inputs
+        required_inputs + optional_inputs + default_inputs
+      end
+
+      def defaults
+        @defaults
       end
 
       # Because call/call! are defined when Action.input is called, they would
@@ -45,9 +53,17 @@ module Verbalize
       def input(*required_keywords, optional: [])
         @required_inputs = required_keywords
         optional = Array(optional)
-        @optional_inputs = optional
+        @optional_inputs = optional.reject { |kw| kw.is_a?(Hash) }
+        assign_defaults(optional)
 
-        class_eval Build.call(required_keywords, optional)
+        class_eval Build.call(required_inputs, optional_inputs, default_inputs)
+      end
+
+      def assign_defaults(optional)
+        @defaults = optional.select { |kw| kw.is_a?(Hash) }.reduce(&:merge)
+        @defaults = (@defaults || {})
+                    .map { |k, v| [k, v.respond_to?(:call) ? v : -> { v }] }
+                    .to_h
       end
 
       def perform(*args)
