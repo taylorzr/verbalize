@@ -11,6 +11,10 @@ module Verbalize
       throw(THROWN_SYMBOL, failure_value)
     end
 
+    def inputs
+      self.class.inputs.map { |i| [i, self.send(i)] }.to_h
+    end
+
     def self.included(target)
       target.extend ClassMethods
     end

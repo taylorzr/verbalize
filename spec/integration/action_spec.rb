@@ -16,6 +16,21 @@ describe Verbalize::Action do
     end
   end
 
+  describe '#inputs' do
+    let(:input_tester) do
+      Class.new do
+        include Verbalize::Action
+        input :a, :b, optional: [:c, {d: 1, e: ->{ 2 }}]
+        def call; inputs; end
+      end
+    end
+
+    it 'pulls all passed in values' do
+      results = input_tester.call!(a: :foo, b: :bar, d: 3)
+      expect(results).to eq({a: :foo, b: :bar, c: nil, d: 3, e: 2})
+    end
+  end
+
   describe '.call' do
     it 'returns a Verbalize::Failure instance on fail!' do
       result = simple_action.call(a: a, b: 0)
