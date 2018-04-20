@@ -11,7 +11,7 @@ module Verbalize
       throw(THROWN_SYMBOL, failure_value)
     end
 
-    def inputs
+    def action_inputs
       self.class.inputs.map { |i| [i, self.send(i)] }.to_h
     end
 

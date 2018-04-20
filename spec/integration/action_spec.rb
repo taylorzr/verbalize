@@ -16,12 +16,12 @@ describe Verbalize::Action do
     end
   end
 
-  describe '#inputs' do
+  describe '#action_inputs' do
     let(:input_tester) do
       Class.new do
         include Verbalize::Action
         input :a, :b, optional: [:c, {d: 1, e: ->{ 2 }}]
-        def call; inputs; end
+        def call; action_inputs; end
       end
     end
 
