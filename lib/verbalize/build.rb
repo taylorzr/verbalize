@@ -1,13 +1,14 @@
 module Verbalize
   class Build
-    def self.call(required_keywords = [], optional_keywords = [], default_keywords = [])
+    def self.call(required_keywords = [], optional_keywords = [], default_keywords = [], validate_keywords = [])
       new(required_keywords, optional_keywords, default_keywords).call
     end
 
-    def initialize(required_keywords, optional_keywords, default_keywords)
+    def initialize(required_keywords, optional_keywords, default_keywords, validate_keywords)
       @required_keywords = required_keywords
       @optional_keywords = optional_keywords
       @default_keywords  = default_keywords
+      @validate_keywords = validate_keywords
     end
 
     def call
@@ -35,7 +36,7 @@ attr_reader #{attribute_readers_string}
       CODE
     end
 
-    attr_reader :required_keywords, :optional_keywords, :default_keywords
+    attr_reader :required_keywords, :optional_keywords, :default_keywords, :validate_keywords
 
     private
 
@@ -55,7 +56,13 @@ attr_reader #{attribute_readers_string}
     end
 
     def initialize_body
-      all_keywords.map { |keyword| "@#{keyword} = #{keyword}" }.join("\n  ")
+      all_keywords.map do |keyword|
+        if validate_keywords.include?(keyword)
+          "self.class.input_validations[:#{keyword}].call ? @#{keyword} = #{keyword} : raise Verbalize::Error, '#{keyword} failed validation!'"
+        else
+          "@#{keyword} = #{keyword}"
+        end
+      end.join("\n  ")
     end
 
     def attribute_readers_string

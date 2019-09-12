@@ -40,6 +40,10 @@ module Verbalize
         @defaults
       end
 
+      def input_validations
+        @input_validations
+      end
+
       # Because call/call! are defined when Action.input is called, they would
       # not be defined when there is no input. So we pre-define them here, and
       # if there is any input, they are overwritten
@@ -54,13 +58,15 @@ module Verbalize
 
       private
 
-      def input(*required_keywords, optional: [])
+      def input(*required_keywords, optional: [], validates: {})
         @required_inputs = required_keywords
         optional = Array(optional)
         @optional_inputs = optional.reject { |kw| kw.is_a?(Hash) }
         assign_defaults(optional)
 
-        class_eval Build.call(required_inputs, optional_inputs, default_inputs)
+        @input_validations = validates
+
+        class_eval Build.call(required_inputs, optional_inputs, default_inputs, validates.keys)
       end
 
       def assign_defaults(optional)
