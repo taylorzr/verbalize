@@ -499,10 +499,6 @@ describe Verbalize::Action do
         validate :validate_value do |v|
           v.is_a?(Integer) && v > 10
         end
-
-        def call
-          v
-        end
       end
     end
 
@@ -512,10 +508,6 @@ describe Verbalize::Action do
         input :validate_value
         validate :validate_value do
           raise StandardError, 'hi'
-        end
-
-        def call
-          validate_value
         end
       end
     end
