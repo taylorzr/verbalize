@@ -125,6 +125,24 @@ Add.optional_inputs # [:c, :d]
 Add.inputs # [:a, :b, :c, :d]
 ```
 
+## Validation
+```ruby
+class FloatAdd
+  include Verbalize::Action
+
+  input :a, :b
+  validates :a { |a| a.is_a?(Float) }
+  validates :b { |b| b.is_a?(Float) }
+
+  def call
+    a + b
+  end
+end
+
+FloatAdd.call!(a: 1, b: 1) # raises Verbalize::Error - Input "a" failed validation!
+FloatAdd.call!(a: 1.0, b: 1.0) # 2.0
+```
+
 ## Comparison/Benchmark
 ```ruby
 require 'verbalize'

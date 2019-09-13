@@ -41,7 +41,13 @@ module Verbalize
       end
 
       def input_validations
-        @input_validations
+        @input_validations ||= {}
+      end
+
+      def input_is_valid?(input, value)
+        return true unless input_validations.include?(input.to_sym)
+
+        input_validations[input].call(value) === true
       end
 
       # Because call/call! are defined when Action.input is called, they would
@@ -58,15 +64,18 @@ module Verbalize
 
       private
 
-      def input(*required_keywords, optional: [], validates: {})
+      def input(*required_keywords, optional: [])
         @required_inputs = required_keywords
         optional = Array(optional)
         @optional_inputs = optional.reject { |kw| kw.is_a?(Hash) }
         assign_defaults(optional)
 
-        @input_validations = validates
+        class_eval Build.call(required_inputs, optional_inputs, default_inputs)
+      end
 
-        class_eval Build.call(required_inputs, optional_inputs, default_inputs, validates.keys)
+      def validates(keyword, &block)
+        raise Verbalize::Error, 'Missing block to validate against!' unless block_given?
+        @input_validations[keyword.to_sym] = block
       end
 
       def assign_defaults(optional)
