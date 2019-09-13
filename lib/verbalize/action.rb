@@ -19,6 +19,17 @@ module Verbalize
       target.extend ClassMethods
     end
 
+    private
+
+    def __setup(key, value)
+      is_valid = self.class.input_is_valid?(key, value)
+      local_error = self.class.pop_local_error
+      fail!(local_error) if !is_valid && local_error
+      fail! "Input '#{key}' failed validation!" unless is_valid
+
+      instance_variable_set(:"@#{key}", value)
+    end
+
     module ClassMethods
       def required_inputs
         @required_inputs || []
@@ -47,7 +58,17 @@ module Verbalize
       def input_is_valid?(input, value)
         return true unless input_validations.include?(input.to_sym)
 
-        input_validations[input].call(value) === true
+        input_validations[input].call(value) == true
+      rescue => e
+        @local_error = e
+        false
+      end
+
+      def pop_local_error
+        return nil unless @local_error
+        @local_error
+      ensure
+        @local_error = nil
       end
 
       # Because call/call! are defined when Action.input is called, they would
@@ -73,9 +94,9 @@ module Verbalize
         class_eval Build.call(required_inputs, optional_inputs, default_inputs)
       end
 
-      def validates(keyword, &block)
+      def validate(keyword, &block)
         raise Verbalize::Error, 'Missing block to validate against!' unless block_given?
-        @input_validations[keyword.to_sym] = block
+        input_validations[keyword.to_sym] = block
       end
 
       def assign_defaults(optional)

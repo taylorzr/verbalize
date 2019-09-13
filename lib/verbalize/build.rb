@@ -56,8 +56,7 @@ attr_reader #{attribute_readers_string}
 
     def initialize_body
       all_keywords.map do |keyword|
-        "self.class.input_is_valid?(:#{keyword}, #{keyword})) ? @#{keyword} = #{keyword}" +
-          " : raise Verbalize::Error, 'Input \"#{keyword}\" failed validation!'"
+        "__setup(:#{keyword}, #{keyword})"
       end.join("\n  ")
     end
 

@@ -131,16 +131,17 @@ class FloatAdd
   include Verbalize::Action
 
   input :a, :b
-  validates :a { |a| a.is_a?(Float) }
-  validates :b { |b| b.is_a?(Float) }
+  validate :a { |a| a.is_a?(Float) }
+  validate :b { |b| b.is_a?(Float) && b > 10.0 }
 
   def call
     a + b
   end
 end
 
-FloatAdd.call!(a: 1, b: 1) # raises Verbalize::Error - Input "a" failed validation!
-FloatAdd.call!(a: 1.0, b: 1.0) # 2.0
+FloatAdd.call!(a: 1, b: 1) # fails with  Input "a" failed validation!
+FloatAdd.call!(a: 1.0, b: 1.0) # fails with Input "b" failed validation!
+FloatAdd.call!(a: 1.0, b: 12.0) # 13.0
 ```
 
 ## Comparison/Benchmark

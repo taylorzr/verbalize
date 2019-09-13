@@ -490,4 +490,49 @@ describe Verbalize::Action do
       end
     end
   end
+
+  describe '.validates' do
+    let(:validating_action) do
+      Class.new do
+        include Verbalize::Action
+        input :validate_value
+        validate :validate_value do |v|
+          v.is_a?(Integer) && v > 10
+        end
+
+        def call
+          v
+        end
+      end
+    end
+
+    let(:crashing_validation) do
+      Class.new do
+        include Verbalize::Action
+        input :validate_value
+        validate :validate_value do
+          raise StandardError, 'hi'
+        end
+
+        def call
+          validate_value
+        end
+      end
+    end
+
+    it 'fails generically if the validation fails' do
+      result = validating_action.call(validate_value: 'hi')
+
+      expect(result).to be_failure
+      expect(result.failure).to match(/validate_value/)
+      expect(result.failure).to match(/failed validation/)
+    end
+
+    it 'fails with the error caused if validation itself errors' do
+      result = crashing_validation.call(validate_value: :nope)
+
+      expect(result).to be_failure
+      expect(result.failure).to be_a(StandardError)
+    end
+  end
 end
