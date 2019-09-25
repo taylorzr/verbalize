@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - release documentation
 
-## 2.2.1 - 2019-09-23
+## 2.3.0 - 2019-09-23
 ### Added
 - you can now specify `validates :key { |value| ... }` on actions to run validation on the input
   *before* running the `call` block.
