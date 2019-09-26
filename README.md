@@ -131,8 +131,8 @@ class FloatAdd
   include Verbalize::Action
 
   input :a, :b
-  validate :a { |a| a.is_a?(Float) }
-  validate :b { |b| b.is_a?(Float) && b > 10.0 }
+  validate(:a) { |a| a.is_a?(Float) }
+  validate(:b) { |b| b.is_a?(Float) && b > 10.0 }
 
   def call
     a + b
