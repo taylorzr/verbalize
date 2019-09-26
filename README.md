@@ -125,6 +125,25 @@ Add.optional_inputs # [:c, :d]
 Add.inputs # [:a, :b, :c, :d]
 ```
 
+## Validation
+```ruby
+class FloatAdd
+  include Verbalize::Action
+
+  input :a, :b
+  validate :a { |a| a.is_a?(Float) }
+  validate :b { |b| b.is_a?(Float) && b > 10.0 }
+
+  def call
+    a + b
+  end
+end
+
+FloatAdd.call!(a: 1, b: 1) # fails with  Input "a" failed validation!
+FloatAdd.call!(a: 1.0, b: 1.0) # fails with Input "b" failed validation!
+FloatAdd.call!(a: 1.0, b: 12.0) # 13.0
+```
+
 ## Comparison/Benchmark
 ```ruby
 require 'verbalize'
@@ -188,21 +207,21 @@ end
 
 ```
 Warming up --------------------------------------
-                Ruby    53.203k i/100ms
-           Verbalize    27.518k i/100ms
-          Actionizer     4.933k i/100ms
-          Interactor     4.166k i/100ms
+                Ruby    63.091k i/100ms
+           Verbalize    40.521k i/100ms
+          Actionizer     5.226k i/100ms
+          Interactor     4.874k i/100ms
 Calculating -------------------------------------
-                Ruby    544.025k (±13.7%) i/s -      2.660M in   5.011207s
-           Verbalize    278.738k (± 8.0%) i/s -      1.403M in   5.074676s
-          Actionizer     49.571k (± 7.0%) i/s -    246.650k in   5.006194s
-          Interactor     45.896k (± 7.1%) i/s -    229.130k in   5.018389s
+                Ruby    751.604k (± 3.0%) i/s -      3.785M in   5.041472s
+           Verbalize    457.598k (± 6.1%) i/s -      2.310M in   5.072488s
+          Actionizer     54.874k (± 3.5%) i/s -    276.978k in   5.054541s
+          Interactor     52.294k (± 3.2%) i/s -    263.196k in   5.038365s
 
 Comparison:
-                Ruby:   544025.0 i/s
-           Verbalize:   278737.9 i/s - 1.95x  slower
-          Actionizer:    49571.1 i/s - 10.97x  slower
-          Interactor:    45896.1 i/s - 11.85x  slower
+                Ruby:   751604.0 i/s
+           Verbalize:   457597.9 i/s - 1.64x  slower
+          Actionizer:    54873.6 i/s - 13.70x  slower
+          Interactor:    52293.6 i/s - 14.37x  slower
 
 ```
 

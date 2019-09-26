@@ -20,7 +20,7 @@ class << self
 end
 
 def initialize(required_argument:)
-  @required_argument = required_argument
+  __setup(:required_argument, required_argument)
 end
 
 private
@@ -46,8 +46,8 @@ class << self
 end
 
 def initialize(required_argument_1:, required_argument_2:)
-  @required_argument_1 = required_argument_1
-  @required_argument_2 = required_argument_2
+  __setup(:required_argument_1, required_argument_1)
+  __setup(:required_argument_2, required_argument_2)
 end
 
 private
@@ -75,7 +75,7 @@ class << self
 end
 
 def initialize(optional_argument: nil)
-  @optional_argument = optional_argument
+  __setup(:optional_argument, optional_argument)
 end
 
 private
@@ -101,8 +101,8 @@ class << self
 end
 
 def initialize(optional_argument_1: nil, optional_argument_2: nil)
-  @optional_argument_1 = optional_argument_1
-  @optional_argument_2 = optional_argument_2
+  __setup(:optional_argument_1, optional_argument_1)
+  __setup(:optional_argument_2, optional_argument_2)
 end
 
 private
@@ -130,8 +130,8 @@ class << self
 end
 
 def initialize(required_argument:, optional_argument: nil)
-  @required_argument = required_argument
-  @optional_argument = optional_argument
+  __setup(:required_argument, required_argument)
+  __setup(:optional_argument, optional_argument)
 end
 
 private
@@ -160,10 +160,10 @@ class << self
 end
 
 def initialize(required_argument_1:, required_argument_2:, optional_argument_1: nil, optional_argument_2: nil)
-  @required_argument_1 = required_argument_1
-  @required_argument_2 = required_argument_2
-  @optional_argument_1 = optional_argument_1
-  @optional_argument_2 = optional_argument_2
+  __setup(:required_argument_1, required_argument_1)
+  __setup(:required_argument_2, required_argument_2)
+  __setup(:optional_argument_1, optional_argument_1)
+  __setup(:optional_argument_2, optional_argument_2)
 end
 
 private
@@ -191,8 +191,8 @@ class << self
 end
 
 def initialize(default1: self.defaults[:default1].call, default2: self.defaults[:default2].call)
-  @default1 = default1
-  @default2 = default2
+  __setup(:default1, default1)
+  __setup(:default2, default2)
 end
 
 private
@@ -220,9 +220,9 @@ class << self
 end
 
 def initialize(req1:, opt1: nil, default: self.defaults[:default].call)
-  @req1 = req1
-  @opt1 = opt1
-  @default = default
+  __setup(:req1, req1)
+  __setup(:opt1, opt1)
+  __setup(:default, default)
 end
 
 private

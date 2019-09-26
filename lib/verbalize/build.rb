@@ -44,9 +44,9 @@ attr_reader #{attribute_readers_string}
     end
 
     def declaration_arguments_string
-      required_segments  = required_keywords.map { |keyword| "#{keyword}:" }
-      optional_segments  = optional_keywords.map { |keyword| "#{keyword}: nil" }
-      default_segments   = default_keywords.map  { |keyword| "#{keyword}: self.defaults[:#{keyword}].call" }
+      required_segments  = required_keywords.map { |kw| "#{kw}:" }
+      optional_segments  = optional_keywords.map { |kw| "#{kw}: nil" }
+      default_segments   = default_keywords.map  { |kw| "#{kw}: self.defaults[:#{kw}].call" }
       (required_segments + optional_segments + default_segments).join(', ')
     end
 
@@ -55,7 +55,9 @@ attr_reader #{attribute_readers_string}
     end
 
     def initialize_body
-      all_keywords.map { |keyword| "@#{keyword} = #{keyword}" }.join("\n  ")
+      all_keywords.map do |keyword|
+        "__setup(:#{keyword}, #{keyword})"
+      end.join("\n  ")
     end
 
     def attribute_readers_string
