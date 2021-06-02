@@ -106,8 +106,8 @@ module Verbalize
                     .to_h
       end
 
-      def perform(*args)
-        new(*args).send(:call)
+      def perform(**args)
+        new(**args).send(:call)
       end
 
       # We used __proxied_call/__proxied_call! for 2 reasons:
@@ -116,17 +116,17 @@ module Verbalize
       #      exist when stubbing
       #   2. Because #1, meta-programming a simple interface to these proxied
       #      methods is much simpler than meta-programming the full methods
-      def __proxied_call(*args)
+      def __proxied_call(**args)
         error = catch(:verbalize_error) do
-          value = perform(*args)
+          value = perform(**args)
           return Success.new(value)
         end
 
         Failure.new(error)
       end
 
-      def __proxied_call!(*args)
-        perform(*args)
+      def __proxied_call!(**args)
+        perform(**args)
       rescue UncaughtThrowError => uncaught_throw_error
         fail_value = uncaught_throw_error.value
         error = Verbalize::Error.new("Unhandled fail! called with: #{fail_value.inspect}.")

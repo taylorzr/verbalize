@@ -1,3 +1,4 @@
+require 'date'
 require 'verbalize/action'
 
 describe Verbalize::Action do
