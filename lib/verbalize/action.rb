@@ -106,32 +106,56 @@ module Verbalize
                     .to_h
       end
 
-      def perform(*args)
-        new(*args).send(:call)
-      end
-
-      # We used __proxied_call/__proxied_call! for 2 reasons:
-      #   1. The declaration of call/call! needs to be explicit so that tools
-      #      like rspec-mocks can verify the actions keywords actually
-      #      exist when stubbing
-      #   2. Because #1, meta-programming a simple interface to these proxied
-      #      methods is much simpler than meta-programming the full methods
-      def __proxied_call(*args)
-        error = catch(:verbalize_error) do
-          value = perform(*args)
-          return Success.new(value)
+      if RUBY_VERSION < "2.7"
+        def perform(*args)
+          new(*args).send(:call)
         end
 
-        Failure.new(error)
-      end
+        def __proxied_call(*args)
+          error = catch(:verbalize_error) do
+            value = perform(*args)
+            return Success.new(value)
+          end
 
-      def __proxied_call!(*args)
-        perform(*args)
-      rescue UncaughtThrowError => uncaught_throw_error
-        fail_value = uncaught_throw_error.value
-        error = Verbalize::Error.new("Unhandled fail! called with: #{fail_value.inspect}.")
-        error.set_backtrace(uncaught_throw_error.backtrace[2..-1])
-        raise error
+          Failure.new(error)
+        end
+
+        def __proxied_call!(*args)
+          perform(*args)
+        rescue UncaughtThrowError => uncaught_throw_error
+          fail_value = uncaught_throw_error.value
+          error = Verbalize::Error.new("Unhandled fail! called with: #{fail_value.inspect}.")
+          error.set_backtrace(uncaught_throw_error.backtrace[2..-1])
+          raise error
+        end
+      else
+        def perform(**args)
+          new(**args).send(:call)
+        end
+
+        # We used __proxied_call/__proxied_call! for 2 reasons:
+        #   1. The declaration of call/call! needs to be explicit so that tools
+        #      like rspec-mocks can verify the actions keywords actually
+        #      exist when stubbing
+        #   2. Because #1, meta-programming a simple interface to these proxied
+        #      methods is much simpler than meta-programming the full methods
+        def __proxied_call(**args)
+          error = catch(:verbalize_error) do
+            value = perform(**args)
+            return Success.new(value)
+          end
+
+          Failure.new(error)
+        end
+
+        def __proxied_call!(**args)
+          perform(**args)
+        rescue UncaughtThrowError => uncaught_throw_error
+          fail_value = uncaught_throw_error.value
+          error = Verbalize::Error.new("Unhandled fail! called with: #{fail_value.inspect}.")
+          error.set_backtrace(uncaught_throw_error.backtrace[2..-1])
+          raise error
+        end
       end
     end
   end
